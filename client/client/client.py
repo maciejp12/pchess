@@ -22,6 +22,7 @@ class Client:
         self.width = 1280
         self.height = 600
 
+        self.running = True
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.surface = pygame.Surface((self.width, self.height))
 
@@ -37,7 +38,7 @@ class Client:
 
     def start(self):
 
-        while True:
+        while self.running:
             dt = self.clock.tick(self.max_fps)
 
             self.input()
@@ -45,15 +46,18 @@ class Client:
             self.draw(dt)
 
         self.conn.disconnect()
+        pygame.display.quit()
         pygame.quit()
+        sys.exit()
 
 
     def input(self):
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.conn.disconnect()
-                sys.exit(0)
+
+            if event.type == pygame.QUIT: 
+                self.running = False
+
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     print('space')
@@ -81,9 +85,7 @@ class Client:
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_F4] and keys[pygame.K_LALT]:
-            self.conn.disconnect()
-            sys.exit(0)
-
+            self.running = False
 
     def update(self, delta):
         pass

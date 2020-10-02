@@ -27,7 +27,7 @@ class ChessServer:
 
         print('Starting server completed')
 
-        thread = Thread(target=self.start_listening)
+        thread = Thread(target=self.start_listening, daemon=True)
         thread.start()
         
         try:

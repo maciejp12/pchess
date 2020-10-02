@@ -19,7 +19,7 @@ class ClientConnection:
             self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.client_socket.connect((self.serv_addr, self.serv_port))
 
-            self.thread = Thread(target=self.run)
+            self.thread = Thread(target=self.run, daemon=True)
             self.thread.start()
         except ConnectionRefusedError:
             print('cannont connect to server')
@@ -63,5 +63,4 @@ class ClientConnection:
 
         self.send(json.dumps(disconnect_signal))
 
-        self.client_socket.close()
-
+        self.client_socket.close() 

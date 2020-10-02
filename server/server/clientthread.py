@@ -65,7 +65,7 @@ class ClientThread:
         
 
     def start_connection(self):
-        thread = Thread(target=self.connect)
+        thread = Thread(target=self.connect, daemon=True)
         thread.start()
 
 
