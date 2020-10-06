@@ -3,6 +3,7 @@ import sys
 import os
 from .clientconnection import ClientConnection
 from .gameboard import Gameboard
+from .textinput import TextInput
 
 
 class Client:
@@ -29,10 +30,11 @@ class Client:
         self.clock = pygame.time.Clock()
         self.max_fps = 60.0
         self.show_debug = False
+        self.conn = None
+        #self.conn = ClientConnection()
+        #self.conn.connect()
 
-        self.conn = ClientConnection()
-        self.conn.connect()
-
+        self.name_input = TextInput(1000, 0, 160, 40, self.main_font)
         self.gameboard = Gameboard()
 
 
@@ -45,7 +47,8 @@ class Client:
             self.update(dt)
             self.draw(dt)
 
-        self.conn.disconnect()
+        if self.conn != None:
+            self.conn.disconnect()
         pygame.display.quit()
         pygame.quit()
         sys.exit()
@@ -54,6 +57,8 @@ class Client:
     def input(self):
 
         for event in pygame.event.get():
+
+            self.name_input.handle_event(event)
 
             if event.type == pygame.QUIT: 
                 self.running = False
@@ -95,7 +100,8 @@ class Client:
         self.surface.fill((0, 0, 0))
 
         self.gameboard.draw(self.surface)
-
+        self.name_input.draw(self.surface)
+        
         if self.show_debug:
             db_text = str(delta)
             self.debug_text = self.main_font.render(db_text, True, (255, 255, 255))
