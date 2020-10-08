@@ -92,6 +92,7 @@ class Client:
         if keys[pygame.K_F4] and keys[pygame.K_LALT]:
             self.running = False
 
+
     def update(self, delta):
         pass
 
