@@ -13,7 +13,7 @@ class TextInput:
         self.rect = pygame.Rect(x, y, wid, hei)
         self.text = ''
         self.color = self.inactive_color
-        self.text_surface = self.font.render(self.text, True, self.color)
+        self.text_surface = self.font.render(self.text, True, self.font_color)
         self.active = False
     
     

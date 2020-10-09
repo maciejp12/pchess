@@ -4,6 +4,7 @@ import os
 from .clientconnection import ClientConnection
 from .gameboard import Gameboard
 from .textinput import TextInput
+from .submitname import SubmitName
 
 
 class Client:
@@ -35,6 +36,13 @@ class Client:
         #self.conn.connect()
 
         self.name_input = TextInput(1000, 0, 160, 40, self.main_font)
+
+        x = 1000
+        y = 50
+        w = 160
+        h = 40
+
+        self.submit_name = SubmitName(x, y, w, h, self.main_font, 'submit', self)
         self.gameboard = Gameboard()
 
 
@@ -59,6 +67,7 @@ class Client:
         for event in pygame.event.get():
 
             self.name_input.handle_event(event)
+            self.submit_name.handle_event(event)
 
             if event.type == pygame.QUIT: 
                 self.running = False
@@ -102,6 +111,7 @@ class Client:
 
         self.gameboard.draw(self.surface)
         self.name_input.draw(self.surface)
+        self.submit_name.draw(self.surface)
         
         if self.show_debug:
             db_text = str(delta)
