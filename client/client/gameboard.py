@@ -47,7 +47,7 @@ class Gameboard:
         for i in range(0, self.size):
             self.fields.append([])
             for j in range(0, self.size):
-                field = {'piece' : None, 'movable' : False}
+                field = {'piece' : {'type' : None, 'color' : None}, 'movable' : False}
                 if (i % 2 == 0 and j % 2 == 0) or (i % 2 != 0 and j % 2 != 0):
                     field['color'] = self.white
                 else:
@@ -68,13 +68,13 @@ class Gameboard:
             p_col = piece['color']
             color = None
             if p_col == 0:
-                color = self.black
+                color = 'white'
             elif p_col == 1:
-                color = self.white
+                color = 'black'
 
             field = self.fields[cord[0]][cord[1]]
             field['piece']['type'] = piece['type']
-            field
+            field['piece']['color'] = color
  
 
     def draw(self, surface):
@@ -86,7 +86,7 @@ class Gameboard:
                 r = (x, y, self.field_wid, self.field_hei)
                 pygame.draw.rect(surface, field['color'], r)
                 
-                if field['piece'] != None:
+                if field['piece']['type'] != None:
                     self.draw_piece(surface, field, x, y)
 
                 if field['movable']:
