@@ -4,6 +4,7 @@ from .knight import Knight
 from .bishop import Bishop
 from .queen import Queen
 from .king import King
+import random
 import json
 
 
@@ -13,8 +14,47 @@ class GameState:
     size = 8
 
 
-    def __init__(self):
+    def __init__(self, serv):
         self.build_board()
+        self.server = serv
+        self.clients = list()
+
+
+    def add_client(self, client):
+        if len(self.clients) < 2:
+            self.clients.append(client)
+            if len(self.clients) == 2:
+                self.on_start()
+
+
+    def on_start(self):
+        #getcolors
+        col_0 = random.randint(0, 1)
+        col_1 = 0
+        if col_0 == 0:
+            col_1 = 1
+
+        self.init_pieces()
+        
+        initstate = {
+            'form' : 'signal',
+            'data' : {
+                'signal_type' : 'onstart',
+                'color' : col_0,
+                'state' : self.state_to_json() 
+            } 
+        }
+         
+        self.clients[0].send_data(json.dumps(initstate))
+
+        initstate['data']['color'] = col_1
+
+        self.clients[1].send_data(json.dumps(initstate))
+ 
+
+    def send_to_all(self, data):
+        for client in self.clients:
+            client.send_data(data)
 
 
     def build_board(self):
@@ -47,4 +87,4 @@ class GameState:
                                    'type' : type(piece).__name__.lower(),
                                    'color' : piece.color})
 
-        return json.dumps(result)
+        return result

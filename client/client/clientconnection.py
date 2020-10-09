@@ -6,7 +6,8 @@ import json
 class ClientConnection:
 
 
-    def __init__(self):
+    def __init__(self, cli):
+        self.client = cli
         self.client_socket = None
         self.serv_addr = '127.0.0.1'
         self.serv_port = 6667
@@ -39,10 +40,33 @@ class ClientConnection:
         while self.active:
             try:
                 data = self.client_socket.recv(4096).decode('utf8')
-                print(data)
+                
+                data_json = json.loads(data) 
+                
+                if data_json['form'] == 'signal':
+                    self.parse_signal(data_json['data'])
+                elif data_json['form'] == 'action':
+                    self.parse_action(data_json['data'])
+                elif data_json['form'] == 'message':
+                    self.parse_message(data_json['data'])
+
             except ConnectionAbortedError:
                 print('connection aborted')
                 self.active = False
+
+
+    def parse_signal(self, data):
+        if data['signal_type'] == 'onstart':
+            print(data['color'])
+            self.client.gameboard.load_state(data['state'])
+
+
+    def parse_action(self, data):
+        pass
+
+
+    def parse_message(self, data):
+        pass
 
 
     def send(self, data):

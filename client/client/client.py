@@ -32,8 +32,8 @@ class Client:
         self.max_fps = 60.0
         self.show_debug = False
         self.conn = None
-        #self.conn = ClientConnection()
-        #self.conn.connect()
+        self.conn = ClientConnection(self)
+        self.conn.connect()
 
         self.name_input = TextInput(1000, 0, 160, 40, self.main_font)
 
@@ -41,8 +41,9 @@ class Client:
         y = 50
         w = 160
         h = 40
+        t = 'submit'
 
-        self.submit_name = SubmitName(x, y, w, h, self.main_font, 'submit', self)
+        self.submit_name = SubmitName(x, y, w, h, self.main_font, t, self)
         self.gameboard = Gameboard()
 
 

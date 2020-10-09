@@ -13,8 +13,7 @@ class ChessServer:
         self.server = None
         self.connected_clients = []
         self.running = False
-        self.game = GameState()
-        self.game.init_pieces()
+        self.game = GameState(self) 
 
 
     def start_server(self):
@@ -34,7 +33,7 @@ class ChessServer:
             while True:
                 pass
         except KeyboardInterrupt:
-            print('ki')
+            print('server stopped(KeyboardInterrupt)')
             self.running = False
             self.on_disconnect()
 
@@ -45,13 +44,13 @@ class ChessServer:
         conn = None    
         
         while self.running:
-            try:
-                conn, addr = self.server.accept()
-                self.handle_client(addr, conn)
-            except:
-                print('conn error')
-                self.running = False
-                self.on_disconnect()
+            #try:
+            conn, addr = self.server.accept()
+            self.handle_client(addr, conn)
+            #except:
+            #    print('conn error(listening)')
+            #    self.running = False
+            #    self.on_disconnect()
 
 
     def handle_client(self, addr, conn):
@@ -59,8 +58,14 @@ class ChessServer:
         new_client = ClientThread(addr, conn, self)
         self.connected_clients.append(new_client)
         new_client.start_connection()
-        
+        self.game.add_client(new_client)
+
         print(self.connected_clients)
+
+
+
+    def send_to_client(self, client, data):
+        client.send_data(data)
 
 
     def send_to_all(self, data):

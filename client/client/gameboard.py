@@ -53,10 +53,7 @@ class Gameboard:
                 else:
                     field['color'] = self.black
                 self.fields[i].append(field)
-        
-        self.fields[3][6]['piece'] = {'type' : 'queen', 'color' : 'black'}
-        self.fields[2][7]['movable'] = True
-        self.fields[3][6]['movable'] = True
+
 
 
     def handle_click(self, x, y):
@@ -64,6 +61,21 @@ class Gameboard:
         y_pos = int((y - self.top) / self.field_hei)
         print((x_pos, y_pos))
 
+
+    def load_state(self, state):
+        for piece in state:
+            cord = piece['cord']
+            p_col = piece['color']
+            color = None
+            if p_col == 0:
+                color = self.black
+            elif p_col == 1:
+                color = self.white
+
+            field = self.fields[cord[0]][cord[1]]
+            field['piece']['type'] = piece['type']
+            field
+ 
 
     def draw(self, surface):
         for i in range(0, self.size):
@@ -83,7 +95,7 @@ class Gameboard:
 
     def draw_piece(self, surface, field, x, y):
         piece = field['piece']
-        color = ''
+        color = None
         if piece['color'] == 'white':
             color = 'w_'
         else:
