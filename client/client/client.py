@@ -44,7 +44,7 @@ class Client:
         t = 'submit'
 
         self.submit_name = SubmitName(x, y, w, h, self.main_font, t, self)
-        self.gameboard = Gameboard()
+        self.gameboard = Gameboard(0, 0, 512, 512)
 
 
     def start(self):
@@ -69,6 +69,7 @@ class Client:
 
             self.name_input.handle_event(event)
             self.submit_name.handle_event(event)
+            self.gameboard.handle_click(event)
 
             if event.type == pygame.QUIT: 
                 self.running = False
@@ -82,20 +83,8 @@ class Client:
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 click = pygame.mouse.get_pos()
-
                 x = click[0]
                 y = click[1]
-
-                gb_left = self.gameboard.left
-                gb_top = self.gameboard.top
-                gb_wid = self.gameboard.width
-                gb_hei = self.gameboard.height
-
-                gb_right = gb_left + gb_wid
-                gb_bot = gb_top + gb_hei
-
-                if gb_left < x < gb_right and gb_top < y < gb_bot:
-                    self.gameboard.handle_click(x, y)
 
         keys = pygame.key.get_pressed()
 

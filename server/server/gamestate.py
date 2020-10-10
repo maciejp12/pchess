@@ -18,6 +18,7 @@ class GameState:
         self.build_board()
         self.server = serv
         self.clients = list()
+        self.cur_turn = None
 
 
     def add_client(self, client):
@@ -28,29 +29,43 @@ class GameState:
 
 
     def on_start(self):
-        #getcolors
-        col_0 = random.randint(0, 1)
-        col_1 = 0
-        if col_0 == 0:
-            col_1 = 1
+        cols = list()
+        cols.append(random.randint(0, 1))
+
+        if cols[0] == 0:
+            cols.append(1)
+        else:
+            cols.apped(0)
 
         self.init_pieces()
+        self.cur_turn = 0
         
         initstate = {
             'form' : 'signal',
             'data' : {
                 'signal_type' : 'onstart',
-                'color' : col_0,
+                'color' : cols[0],
                 'state' : self.state_to_json() 
             } 
         }
-         
+
         self.clients[0].send_data(json.dumps(initstate))
-
-        initstate['data']['color'] = col_1
-
+        initstate['data']['color'] = cols[1]
         self.clients[1].send_data(json.dumps(initstate))
- 
+        
+        self.send_to_all(json.dumps(self.before_turn_action()))
+
+
+    def before_turn_action(self):
+        before = {
+            'form' : 'action',
+            'data' : {
+                'cur_turn' : self.cur_turn
+            }
+        }
+
+        return before
+
 
     def send_to_all(self, data):
         for client in self.clients:

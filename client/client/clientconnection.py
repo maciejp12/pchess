@@ -58,6 +58,7 @@ class ClientConnection:
     def parse_signal(self, data):
         if data['signal_type'] == 'onstart':
             self.client.gameboard.load_state(data['state'])
+            self.client.gameboard.side = data['color']
 
 
     def parse_action(self, data):

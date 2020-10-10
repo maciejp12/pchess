@@ -10,16 +10,12 @@ class Gameboard:
     size = 8
 
 
-    def __init__(self):
-        self.top = 0
-        self.left = 0
+    def __init__(self, x, y, wid, hei):
 
-        self.field_wid = 64
-        self.width = self.size * self.field_wid
-
-        self.field_hei = 64
-        self.height = self.size * self.field_hei
-
+        self.rect = pygame.Rect(x, y, wid, hei)
+        self.field_wid = self.rect.width / self.size
+        self.field_hei = self.rect.height / self.size
+    
         path = './resources/images/'
         
         self.piece_images = {
@@ -41,25 +37,33 @@ class Gameboard:
         }
 
         self.movable_img = pygame.image.load(path + 'movable_field.png')
+        self.side = None
 
         self.fields = []
 
         for i in range(0, self.size):
             self.fields.append([])
             for j in range(0, self.size):
-                field = {'piece' : {'type' : None, 'color' : None}, 'movable' : False}
+                field = dict()
+                field['piece'] = {'type' : None, 'color' : None}
+                field['movable'] = False
+
                 if (i % 2 == 0 and j % 2 == 0) or (i % 2 != 0 and j % 2 != 0):
                     field['color'] = self.white
                 else:
                     field['color'] = self.black
+                
                 self.fields[i].append(field)
 
 
 
-    def handle_click(self, x, y):
-        x_pos = int((x - self.left) / self.field_wid)
-        y_pos = int((y - self.top) / self.field_hei)
-        print((x_pos, y_pos))
+    def handle_click(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                pos = pygame.mouse.get_pos()
+                x_pos = int((pos[0] - self.rect.left) / self.field_wid)
+                y_pos = int((pos[1] - self.rect.top) / self.field_hei)
+                print((x_pos, y_pos))
 
 
     def load_state(self, state):
@@ -81,8 +85,8 @@ class Gameboard:
         for i in range(0, self.size):
             for j in range(0, self.size):
                 field = self.fields[i][j]
-                x = i * self.field_wid + self.left
-                y = j * self.field_hei + self.top
+                x = i * self.field_wid + self.rect.left
+                y = j * self.field_hei + self.rect.top
                 r = (x, y, self.field_wid, self.field_hei)
                 pygame.draw.rect(surface, field['color'], r)
                 
@@ -102,7 +106,8 @@ class Gameboard:
             color = 'b_'
 
         piece_img = self.piece_images[color + piece['type']]
-        scale = (self.field_wid, self.field_hei)
+        scale = (int(self.field_wid), int(self.field_hei))
+
         piece_img = pygame.transform.scale(piece_img, scale)
         
         surface.blit(piece_img, (x, y))
