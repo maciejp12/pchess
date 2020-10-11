@@ -119,12 +119,12 @@ class BoardTest(unittest.TestCase):
         queen = Queen(7, 7, Piece.black, state)
 
         actual = state.state_to_json()
-        expected = json.dumps(
-                    [{'cord' : (3, 6), 'type' : 'pawn', 'color' : Piece.white},
+        expected = [
+                    {'cord' : (3, 6), 'type' : 'pawn', 'color' : Piece.white},
                     {'cord' : (7, 7), 'type' : 'queen', 'color' : Piece.black}
-                   ])
+                   ]
     
-        self.assertEqual(actual, expected)
+        self.assertListEqual(actual, expected)
 
 
 if __name__ == '__main__':

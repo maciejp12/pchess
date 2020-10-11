@@ -30,7 +30,7 @@ class Client:
 
         self.clock = pygame.time.Clock()
         self.max_fps = 60.0
-        self.show_debug = False
+        self.show_debug = True
         self.conn = None
         self.conn = ClientConnection(self)
         self.conn.connect()
@@ -45,6 +45,7 @@ class Client:
 
         self.submit_name = SubmitName(x, y, w, h, self.main_font, t, self)
         self.gameboard = Gameboard(0, 0, 512, 512)
+        self.gameboard.set_client(self)
 
 
     def start(self):
@@ -104,7 +105,10 @@ class Client:
         self.submit_name.draw(self.surface)
         
         if self.show_debug:
-            db_text = str(delta)
+            t_str = ' turn=' + str(self.gameboard.turn)
+            s_str = ' side=' + str(self.gameboard.side)
+
+            db_text = str(delta) + t_str + s_str
             self.debug_text = self.main_font.render(db_text, True, (255, 255, 255))
             self.surface.blit(self.debug_text, (0, 0))
 

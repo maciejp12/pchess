@@ -13,8 +13,8 @@ class ChessServer:
         self.server = None
         self.connected_clients = []
         self.running = False
-        self.game = GameState(self) 
-
+        self.game = GameState() 
+        self.game.set_server(self)
 
     def start_server(self):
         print('Starting on : (' + self.address + ', ' + str(self.port) + ')')
@@ -96,10 +96,3 @@ class ChessServer:
         self.connected_clients.remove(client)
         print(self.connected_clients)
 
-
-
-# package {
-# source : name
-# form : signal, message, action
-# data : dep on type (dict)
-#}

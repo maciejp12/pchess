@@ -28,7 +28,10 @@ class ClientConnection:
 
     def run(self):
         connect_signal = {
-            'source' : self.name,
+            'source' : {
+                'name' : self.name,
+                'color' : None
+            },
             'form' : 'signal',
             'data' : {
                 'signal_type' : 'connect'
@@ -42,13 +45,14 @@ class ClientConnection:
                 data = self.client_socket.recv(4096).decode('utf8')
                 
                 data_json = json.loads(data) 
-                
+                content = data_json['data']
+
                 if data_json['form'] == 'signal':
-                    self.parse_signal(data_json['data'])
+                    self.parse_signal(content)
                 elif data_json['form'] == 'action':
-                    self.parse_action(data_json['data'])
+                    self.parse_action(content)
                 elif data_json['form'] == 'message':
-                    self.parse_message(data_json['data'])
+                    self.parse_message(content)
 
             except ConnectionAbortedError:
                 print('connection aborted')
@@ -62,7 +66,8 @@ class ClientConnection:
 
 
     def parse_action(self, data):
-        pass
+        if data['action_type'] == 'before_turn':
+            self.client.gameboard.update_turn(data['cur_turn'])
 
 
     def parse_message(self, data):
@@ -71,6 +76,7 @@ class ClientConnection:
 
     def send(self, data):
         if self.active:
+            print('sending to server : ' + str(data))
             self.client_socket.send(data.encode('utf8'))
 
 

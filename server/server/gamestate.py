@@ -14,11 +14,14 @@ class GameState:
     size = 8
 
 
-    def __init__(self, serv):
+    def __init__(self):
         self.build_board()
-        self.server = serv
         self.clients = list()
         self.cur_turn = None
+
+
+    def set_server(self, serv):
+        self.server = serv
 
 
     def add_client(self, client):
@@ -35,7 +38,7 @@ class GameState:
         if cols[0] == 0:
             cols.append(1)
         else:
-            cols.apped(0)
+            cols.append(0)
 
         self.init_pieces()
         self.cur_turn = 0
@@ -60,6 +63,7 @@ class GameState:
         before = {
             'form' : 'action',
             'data' : {
+                'action_type' : 'before_turn',
                 'cur_turn' : self.cur_turn
             }
         }

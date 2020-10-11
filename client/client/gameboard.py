@@ -1,4 +1,5 @@
 import pygame
+import json
 
 
 class Gameboard:
@@ -37,9 +38,12 @@ class Gameboard:
         }
 
         self.movable_img = pygame.image.load(path + 'movable_field.png')
+
         self.side = None
+        self.turn = None
 
         self.fields = []
+        self.selected = None
 
         for i in range(0, self.size):
             self.fields.append([])
@@ -56,14 +60,115 @@ class Gameboard:
                 self.fields[i].append(field)
 
 
+    def set_client(self, cli):
+        self.client = cli
+
 
     def handle_click(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
-                pos = pygame.mouse.get_pos()
-                x_pos = int((pos[0] - self.rect.left) / self.field_wid)
-                y_pos = int((pos[1] - self.rect.top) / self.field_hei)
-                print((x_pos, y_pos))
+                if self.side != None and self.turn != None:
+                    pos = pygame.mouse.get_pos()
+                    x_pos = int((pos[0] - self.rect.left) / self.field_wid)
+                    y_pos = int((pos[1] - self.rect.top) / self.field_hei)
+
+                    self.handle_field_action(x_pos, y_pos)
+                        
+
+    def handle_field_action(self, x, y):
+        field = self.fields[x][y]
+        if self.side == self.turn:
+            if field['movable']:
+                if self.selected != None:
+                    action = self.build_move_request(x, y)
+                    self.send_to_server(json.dumps(action))
+                else:
+                    self.unselect_all()
+            else:
+                if self.selected != None:
+                    if self.selected == (x, y):
+                        self.unselect_all()
+                        return
+                    else:
+                        self.unselect_all()
+                    
+                if field['piece']['type'] != None:
+                    piece = field['piece']
+
+                    side_col = None
+                    if self.side == 0:
+                        side_col = 'white'
+                    else:
+                        side_col = 'black'
+
+                    if piece['color'] == side_col:
+                        print((x, y))
+
+                        self.unselect_all()
+                        self.selected = (x, y)
+                        
+                        action = self.build_movable_request()
+                        self.send_to_server(json.dumps(action))
+                    else:
+                        self.unselect_all()
+                else:
+                    self.unselect_all()
+        else:
+            self.unselect_all()
+
+
+    def unselect_all(self):
+        for column in self.fields:
+            for field in column:
+                if field['movable']:
+                    field['movable'] = False
+        
+        self.selected = None
+
+
+    def get_source(self):
+        source = {
+            'name' : self.client.conn.name,
+            'side' : self.side
+        }
+
+        return source
+
+
+    def build_action_package(self):
+        action = {
+            'source' : self.get_source(),
+            'form' : 'action',
+            'data' : None
+        }
+
+        return action
+
+
+    def build_movable_request(self):
+        data = {
+            'action_type' : 'get_movable',
+            'cords' : self.selected
+        }
+
+        action = self.build_action_package()
+        action['data'] = data
+
+        return action
+
+
+    def build_move_request(self, x, y):
+        data = {
+            'action_type' : 'move',
+            'source_cords' : self.selected,
+            'target_cords' : (x, y)
+        }
+
+        action = self.build_action_package()
+        action['data'] = data
+
+        return action
+
 
 
     def load_state(self, state):
@@ -81,6 +186,14 @@ class Gameboard:
             field['piece']['color'] = color
  
 
+    def update_turn(self, turn):
+        self.turn = turn
+
+
+    def send_to_server(self, data):
+        self.client.conn.send(data)
+
+
     def draw(self, surface):
         for i in range(0, self.size):
             for j in range(0, self.size):
@@ -95,6 +208,10 @@ class Gameboard:
 
                 if field['movable']:
                     self.draw_movable(surface, x, y)
+
+                if self.selected != None:
+                    if (i, j) == self.selected:
+                        self.draw_selected(surface, r)
 
 
     def draw_piece(self, surface, field, x, y):
@@ -117,20 +234,7 @@ class Gameboard:
         scale = (self.field_wid, self.field_hei)
         img = pygame.transform.scale(self.movable_img, scale)
         surface.blit(img, (x, y))
-    
-    
-    
-    
-    #self.board:
-    #[
-    #{color : white, movable : True, piece : {type : 'queen', color : 'black'}}  
-    #{color : black, movable : False, piece : None} ...
-    #]
 
-    #after connection get json with full init piece list from server
-    
-    #click on field: (client)
-    #if turn => if has piece => if piece color same as client => then send action json to server with piece cords, recieve movable list from server and set movable to true
-    #        => if has no piece => then cancel all movable
-    #        => if field is movable then send action json(move) to server with cords and end turn
 
+    def draw_selected(self, surface, r):
+        pygame.draw.rect(surface, (0, 255, 0), r, 3)

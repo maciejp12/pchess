@@ -49,7 +49,7 @@ class ClientThread:
         source = data['source']
 
         if signal == 'connect':
-            self.name = source
+            self.name = source['name']
             self.id = self.server.connected_clients.index(self)
 
         if signal == 'disconnect':
@@ -61,8 +61,14 @@ class ClientThread:
 
 
     def parse_action(self, data):
-        pass
-        
+        action = data['data']
+        action_type = action['action_type']
+
+        if action_type == 'get_movable':
+            pass
+        elif action_type == 'move':
+            pass
+
 
     def start_connection(self):
         thread = Thread(target=self.connect, daemon=True)
