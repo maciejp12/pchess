@@ -173,9 +173,14 @@ class Gameboard:
         return action
 
 
-    def handle_movable_response(self, mov):
-        for field in mov:
-            self.fields[field[0]][field[1]]['movable'] = True
+    def handle_movable_response(self, data):
+        if data['valid']: 
+            mov = data['mov_list']
+            for field in mov:
+                self.fields[field[0]][field[1]]['movable'] = True
+        else:
+            self.unselect_all()
+            print('get movable response is invalid')
 
 
     def load_state(self, state):

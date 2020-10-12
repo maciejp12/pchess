@@ -43,12 +43,11 @@ class ClientConnection:
         while self.active:
             try:
                 data = self.client_socket.recv(4096).decode('utf8')
-                #print(data)
-
+           
                 sep = '}{'
 
                 splited = data.split(sep)
-                print('########LEN SPLITED = ' + str(len(splited)))
+            
                 if len(splited) == 2:
                     splited[0] += '}'
                     splited[1] = '{' + splited[1]
@@ -86,7 +85,7 @@ class ClientConnection:
         if data['action_type'] == 'before_turn':
             self.client.gameboard.update_turn(data['cur_turn'])
         elif data['action_type'] == 'movable_response':
-            self.client.gameboard.handle_movable_response(data['mov_list'])
+            self.client.gameboard.handle_movable_response(data)
 
 
     def parse_message(self, data):
