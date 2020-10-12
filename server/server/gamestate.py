@@ -71,6 +71,46 @@ class GameState:
         return before
 
 
+    def after_turn_action(self):
+        after = dict()
+        
+        return after
+
+
+    def handle_get_movable(self, data, client):
+        print(data)
+        cl_side = data['source']['side']
+        cords = data['data']['cords']
+
+        response = {
+            'form' : 'action',
+            'data' : {
+                'action_type' : 'movable_response'
+            }
+        }
+
+        if self.cur_turn == cl_side:
+            piece = self.board[cords[0]][cords[1]]
+            if piece != None:
+                if piece.color == cl_side:
+                    mov = piece.get_movable()
+                    print(mov)
+                    response['data']['valid'] = True
+                    response['data']['mov_list'] = mov 
+                else:
+                    response['valid'] = False
+            else:
+                response['valid'] = False
+        else:
+            response['valid'] = False
+
+        client.send_data(json.dumps(response))
+
+
+    def handle_move(self, data):
+        pass
+
+
     def send_to_all(self, data):
         for client in self.clients:
             client.send_data(data)
@@ -83,7 +123,7 @@ class GameState:
             self.board.append([])
             for j in range(0, self.size):
                 self.board[i].append(None)
-        
+
 
     def init_pieces(self):
         types = (King, Queen, Bishop, Knight, Tower, Pawn)

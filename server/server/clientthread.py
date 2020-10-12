@@ -65,9 +65,11 @@ class ClientThread:
         action_type = action['action_type']
 
         if action_type == 'get_movable':
-            pass
+            #TODO handle only on connected gamestate (select from list later)
+            self.server.game.handle_get_movable(data, self)
         elif action_type == 'move':
-            pass
+            #TODO same as above
+            self.server.game.handle_move(data)
 
 
     def start_connection(self):

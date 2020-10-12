@@ -41,6 +41,7 @@ class Gameboard:
 
         self.side = None
         self.turn = None
+        self.waiting = False
 
         self.fields = []
         self.selected = None
@@ -67,7 +68,7 @@ class Gameboard:
     def handle_click(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
-                if self.side != None and self.turn != None:
+                if self.side != None and self.turn != None and not self.waiting:
                     pos = pygame.mouse.get_pos()
                     x_pos = int((pos[0] - self.rect.left) / self.field_wid)
                     y_pos = int((pos[1] - self.rect.top) / self.field_hei)
@@ -82,6 +83,8 @@ class Gameboard:
                 if self.selected != None:
                     action = self.build_move_request(x, y)
                     self.send_to_server(json.dumps(action))
+                    self.unselect_all()
+                    self.waiting = True
                 else:
                     self.unselect_all()
             else:
@@ -170,6 +173,10 @@ class Gameboard:
         return action
 
 
+    def handle_movable_response(self, mov):
+        for field in mov:
+            self.fields[field[0]][field[1]]['movable'] = True
+
 
     def load_state(self, state):
         for piece in state:
@@ -231,7 +238,7 @@ class Gameboard:
 
     
     def draw_movable(self, surface, x, y):
-        scale = (self.field_wid, self.field_hei)
+        scale = (int(self.field_wid), int(self.field_hei))
         img = pygame.transform.scale(self.movable_img, scale)
         surface.blit(img, (x, y))
 

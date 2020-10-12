@@ -30,7 +30,7 @@ class ClientConnection:
         connect_signal = {
             'source' : {
                 'name' : self.name,
-                'color' : None
+                'side' : None
             },
             'form' : 'signal',
             'data' : {
@@ -43,16 +43,32 @@ class ClientConnection:
         while self.active:
             try:
                 data = self.client_socket.recv(4096).decode('utf8')
-                
-                data_json = json.loads(data) 
-                content = data_json['data']
+                #print(data)
 
-                if data_json['form'] == 'signal':
-                    self.parse_signal(content)
-                elif data_json['form'] == 'action':
-                    self.parse_action(content)
-                elif data_json['form'] == 'message':
-                    self.parse_message(content)
+                sep = '}{'
+
+                splited = data.split(sep)
+                print('########LEN SPLITED = ' + str(len(splited)))
+                if len(splited) == 2:
+                    splited[0] += '}'
+                    splited[1] = '{' + splited[1]
+                elif len(splited) > 2:
+                    splited[0] += '}'
+                    for i in range(1, len(spltied) - 1):
+                        splited[i] = '{' + splited[i] + '}'
+                    splited[-1] = '{' + splited[-1]
+
+
+                for s in splited:
+                    data_json = json.loads(s) 
+                    content = data_json['data']
+
+                    if data_json['form'] == 'signal':
+                        self.parse_signal(content)
+                    elif data_json['form'] == 'action':
+                        self.parse_action(content)
+                    elif data_json['form'] == 'message':
+                        self.parse_message(content)
 
             except ConnectionAbortedError:
                 print('connection aborted')
@@ -66,8 +82,11 @@ class ClientConnection:
 
 
     def parse_action(self, data):
+        print('RECIEVED ACTION : ' + str(data))
         if data['action_type'] == 'before_turn':
             self.client.gameboard.update_turn(data['cur_turn'])
+        elif data['action_type'] == 'movable_response':
+            self.client.gameboard.handle_movable_response(data['mov_list'])
 
 
     def parse_message(self, data):
