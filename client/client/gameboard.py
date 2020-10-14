@@ -82,9 +82,9 @@ class Gameboard:
             if field['movable']:
                 if self.selected != None:
                     action = self.build_move_request(x, y)
-                    self.send_to_server(json.dumps(action))
                     self.unselect_all()
                     self.waiting = True
+                    self.send_to_server(json.dumps(action)) 
                 else:
                     self.unselect_all()
             else:

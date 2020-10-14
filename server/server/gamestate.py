@@ -77,8 +77,7 @@ class GameState:
         return after
 
 
-    def handle_get_movable(self, data, client):
-        print(data)
+    def handle_get_movable(self, data, client): 
         cl_side = data['source']['side']
         cords = data['data']['cords']
 
@@ -93,8 +92,7 @@ class GameState:
             piece = self.board[cords[0]][cords[1]]
             if piece != None:
                 if piece.color == cl_side:
-                    mov = piece.get_movable()
-                    print(mov)
+                    mov = piece.get_movable() 
                     response['data']['valid'] = True
                     response['data']['mov_list'] = mov 
                 else:
@@ -108,6 +106,21 @@ class GameState:
 
 
     def handle_move(self, data):
+        cl_side = data['source']['side']
+
+        source = data['data']['source_cords']
+        target = data['data']['target_cords']
+       
+        if self.cur_turn == cl_side:     
+            piece = self.board[source[0]][source[1]]
+            if piece != None:
+                if piece.color == cl_side:
+                    print(str(target) + ' , ' + str(piece.get_movable()))
+                    if tuple(target) in piece.get_movable():
+                        self.make_move(source, target)
+
+
+    def make_move(self, source, target):
         pass
 
 

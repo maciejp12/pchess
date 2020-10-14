@@ -88,3 +88,4 @@ class ClientThread:
     def send_data(self, data):
         encoded = data.encode('utf8')
         self.connection.send(encoded)
+
