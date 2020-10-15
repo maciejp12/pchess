@@ -15,7 +15,10 @@ class TextInput:
         self.color = self.inactive_color
         self.text_surface = self.font.render(self.text, True, self.font_color)
         self.active = False
-    
+        self.backspace_max_delay = 500
+        self.backspace_delay = 0
+        self.backspace_hold = False
+
     
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -34,13 +37,33 @@ class TextInput:
             if self.active:
                 if event.key == pygame.K_BACKSPACE:
                     self.text = self.text[:-1]
+                    self.backspace_hold = True
                 elif event.key == pygame.K_ESCAPE and self.active:
                     self.active = False
                     self.color = self.inactive_color
                 else:
                     self.text += event.unicode
 
-            self.text_surface = self.font.render(self.text, True, self.font_color)
+            f = self.font_color
+            self.text_surface = self.font.render(self.text, True, f)
+
+        keys = pygame.key.get_pressed()
+
+        if self.active:
+            if not keys[pygame.K_BACKSPACE]:
+                self.backspace_hold = False
+                self.backspace_delay = 0   
+
+
+    def update(self, dt):
+        if self.active:
+            if self.backspace_hold:
+                if self.backspace_delay < self.backspace_max_delay:
+                    self.backspace_delay += dt
+                else:
+                    self.text = self.text[:-1]
+                    f = self.font_color
+                    self.text_surface = self.font.render(self.text, True, f)
 
 
     def draw(self, surface):

@@ -9,5 +9,3 @@ class SubmitName(Button):
         super().__init__(x, y, wid, hei, f, t)
         self.client = cli
 
-    def action(self, event):
-        print('sn')

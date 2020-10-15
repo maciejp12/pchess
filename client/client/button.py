@@ -26,7 +26,7 @@ class Button:
 
 
     def action(self, event):
-        print('test')
+        print('button pressed : ' + str(self) + ' {' + self.text + '}')
 
 
     def set_text(self, t):

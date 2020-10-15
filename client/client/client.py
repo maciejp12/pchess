@@ -79,8 +79,9 @@ class Client:
                 if event.key == pygame.K_SPACE:
                     print('space')
                 
-                if event.key == pygame.K_f:
-                    self.show_debug = not self.show_debug
+                if not self.name_input.active:
+                    if event.key == pygame.K_f:
+                        self.show_debug = not self.show_debug
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 click = pygame.mouse.get_pos()
@@ -94,7 +95,7 @@ class Client:
 
 
     def update(self, delta):
-        pass
+        self.name_input.update(delta)
 
     
     def draw(self, delta):
@@ -107,8 +108,10 @@ class Client:
         if self.show_debug:
             t_str = ' turn=' + str(self.gameboard.turn)
             s_str = ' side=' + str(self.gameboard.side)
+            b_str = ' hold=' + str(self.name_input.backspace_hold)
+            d_str = ' time=' + str(self.name_input.backspace_delay)
 
-            db_text = str(delta) + t_str + s_str
+            db_text = str(delta) + t_str + s_str + b_str + d_str
             self.debug_text = self.main_font.render(db_text, True, (255, 255, 255))
             self.surface.blit(self.debug_text, (0, 0))
 
