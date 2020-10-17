@@ -75,15 +75,17 @@ class ClientConnection:
 
 
     def parse_signal(self, data):
+        print('RECIEVED SIGNAL: ' + str(data))
         if data['signal_type'] == 'onstart':
             self.client.gameboard.load_state(data['state'])
             self.client.gameboard.side = data['color']
+            self.client.gameboard.turn = data['turn'] 
 
 
     def parse_action(self, data):
         print('RECIEVED ACTION : ' + str(data))
         if data['action_type'] == 'before_turn':
-            self.client.gameboard.update_turn(data['cur_turn'])
+            self.client.gameboard.update_turn(data)
         elif data['action_type'] == 'movable_response':
             self.client.gameboard.handle_movable_response(data)
 

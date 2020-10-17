@@ -16,3 +16,8 @@ class Piece:
         self.color = color
         self.state = state
         self.state.board[x][y] = self
+
+
+    def after_move(self):
+        pass
+

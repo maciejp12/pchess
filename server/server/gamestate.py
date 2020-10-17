@@ -32,6 +32,7 @@ class GameState:
 
 
     def on_start(self):
+        print('STARTING GAME')
         cols = list()
         cols.append(random.randint(0, 1))
 
@@ -48,22 +49,23 @@ class GameState:
             'data' : {
                 'signal_type' : 'onstart',
                 'color' : cols[0],
-                'state' : self.state_to_json() 
+                'state' : self.state_to_json(), 
+                'turn' : self.cur_turn
             } 
         }
 
         self.clients[0].send_data(json.dumps(initstate))
         initstate['data']['color'] = cols[1]
         self.clients[1].send_data(json.dumps(initstate))
-        
-        self.send_to_all(json.dumps(self.before_turn_action()))
+ 
 
 
-    def before_turn_action(self):
+    def build_before_turn_action(self, move):
         before = {
             'form' : 'action',
             'data' : {
                 'action_type' : 'before_turn',
+                'move' : move,
                 'cur_turn' : self.cur_turn
             }
         }
@@ -71,10 +73,16 @@ class GameState:
         return before
 
 
-    def after_turn_action(self):
-        after = dict()
-        
-        return after
+    def build_invalid_move_action(self, move):
+        invalid = {
+            'form' : 'action',
+            'data' : {
+                'action_type' : 'invalid_move',
+                'move' : move
+            }
+        }
+
+        return invalid
 
 
     def handle_get_movable(self, data, client): 
@@ -110,18 +118,45 @@ class GameState:
 
         source = data['data']['source_cords']
         target = data['data']['target_cords']
-       
+
         if self.cur_turn == cl_side:     
             piece = self.board[source[0]][source[1]]
             if piece != None:
                 if piece.color == cl_side:
                     print(str(target) + ' , ' + str(piece.get_movable()))
                     if tuple(target) in piece.get_movable():
-                        self.make_move(source, target)
+                        move = self.make_move(source, target)
+                        
+                        if self.cur_turn == 1:
+                            self.cur_turn = 0
+                        else:
+                            self.cur_turn = 1
+
+                        action = self.build_before_turn_action(move)
+                        self.send_to_all(json.dumps(action))
 
 
     def make_move(self, source, target):
-        pass
+        source_piece = self.board[source[0]][source[1]]
+        target_field = self.board[source[0]][source[1]]
+        hit = False
+        if target_field != None:
+            hit = True
+
+        self.board[target[0]][target[1]] = source_piece
+        self.board[source[0]][source[1]] = None
+        source_piece.x = target[0]
+        source_piece.y = target[1]
+
+        source_piece.after_move()
+
+        move_log = {
+            'source' : source,
+            'target' : target,
+            'hit' : hit
+        }
+
+        return move_log
 
 
     def send_to_all(self, data):

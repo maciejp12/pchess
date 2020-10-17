@@ -72,4 +72,9 @@ class Pawn(Piece):
 
 
         return movables
-        
+
+
+    def after_move(self):
+        if self.idle:
+            self.idle = False
+
