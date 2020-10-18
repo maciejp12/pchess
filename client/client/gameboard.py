@@ -198,8 +198,22 @@ class Gameboard:
             field['piece']['color'] = color
  
 
-    def update_turn(self, turn):
-        self.turn = turn
+    def update_turn(self, data):
+        #TODO log moves history (handle hits)
+        move = data['move']
+        source = move['source']
+        target = move['target']
+
+        source_field = self.fields[source[0]][source[1]]
+        target_field = self.fields[target[0]][target[1]]
+
+        target_field['piece']['type'] = source_field['piece']['type']
+        target_field['piece']['color'] = source_field['piece']['color']
+        source_field['piece']['type'] = None
+        source_field['piece']['color'] = None
+
+        self.turn = data['cur_turn']
+        self.waiting = False
 
 
     def send_to_server(self, data):

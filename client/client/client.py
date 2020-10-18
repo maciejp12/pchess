@@ -1,6 +1,6 @@
-import pygame
 import sys
 import os
+import pygame
 from .clientconnection import ClientConnection
 from .gameboard import Gameboard
 from .textinput import TextInput
@@ -18,8 +18,8 @@ class Client:
         os.environ['SDL_VIDEO_WINDOW_POS'] = str(x) + ',' + str(y)
         pygame.font.init()
 
-        self.main_font = pygame.font.Font('./resources/Ubuntu-R.ttf', 15)
-        self.debug_text = self.main_font.render('', True, (255, 255, 255))
+        self.main_font = pygame.font.Font('./resources/Ubuntu-R.ttf', 17)
+        self.debug_text = self.main_font.render('', True, (0, 128, 128))
 
         self.width = 1280
         self.height = 600
@@ -108,11 +108,9 @@ class Client:
         if self.show_debug:
             t_str = ' turn=' + str(self.gameboard.turn)
             s_str = ' side=' + str(self.gameboard.side)
-            b_str = ' hold=' + str(self.name_input.backspace_hold)
-            d_str = ' time=' + str(self.name_input.backspace_delay)
 
-            db_text = str(delta) + t_str + s_str + b_str + d_str
-            self.debug_text = self.main_font.render(db_text, True, (255, 255, 255))
+            db_text = str(delta) + t_str + s_str
+            self.debug_text = self.main_font.render(db_text, True, (0, 128, 128))
             self.surface.blit(self.debug_text, (0, 0))
 
         self.screen.blit(self.surface, (0, 0))

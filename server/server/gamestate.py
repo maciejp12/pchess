@@ -123,7 +123,6 @@ class GameState:
             piece = self.board[source[0]][source[1]]
             if piece != None:
                 if piece.color == cl_side:
-                    print(str(target) + ' , ' + str(piece.get_movable()))
                     if tuple(target) in piece.get_movable():
                         move = self.make_move(source, target)
                         
