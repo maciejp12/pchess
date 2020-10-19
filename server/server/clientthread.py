@@ -69,7 +69,7 @@ class ClientThread:
             self.server.game.handle_get_movable(data, self)
         elif action_type == 'move':
             #TODO same as above
-            self.server.game.handle_move(data)
+            self.server.game.handle_move(data, self)
 
 
     def start_connection(self):

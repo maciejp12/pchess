@@ -216,6 +216,12 @@ class Gameboard:
         self.waiting = False
 
 
+    def on_invalid_move(self, data):
+        self.unselect_all()
+        self.waiting = False
+        #TODO handle error logging
+
+
     def send_to_server(self, data):
         self.client.conn.send(data)
 

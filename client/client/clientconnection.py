@@ -88,6 +88,8 @@ class ClientConnection:
             self.client.gameboard.update_turn(data)
         elif data['action_type'] == 'movable_response':
             self.client.gameboard.handle_movable_response(data)
+        elif data['action_type'] == 'invalid_move':
+            self.client.gameboard.on_invalid_move(data)
 
 
     def parse_message(self, data):

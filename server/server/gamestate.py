@@ -43,21 +43,27 @@ class GameState:
 
         self.init_pieces()
         self.cur_turn = 0
+
+        initstate = self.build_initstate_signal(cols[0])
+        self.clients[0].send_data(json.dumps(initstate))
         
+        initstate = self.build_initstate_signal(cols[1])
+        self.clients[1].send_data(json.dumps(initstate))
+ 
+
+
+    def build_initstate_signal(self, color):
         initstate = {
             'form' : 'signal',
             'data' : {
                 'signal_type' : 'onstart',
-                'color' : cols[0],
-                'state' : self.state_to_json(), 
+                'color' : color,
+                'state' : self.state_to_json(),
                 'turn' : self.cur_turn
-            } 
+            }
         }
 
-        self.clients[0].send_data(json.dumps(initstate))
-        initstate['data']['color'] = cols[1]
-        self.clients[1].send_data(json.dumps(initstate))
- 
+        return initstate
 
 
     def build_before_turn_action(self, move):
@@ -92,7 +98,9 @@ class GameState:
         response = {
             'form' : 'action',
             'data' : {
-                'action_type' : 'movable_response'
+                'action_type' : 'movable_response',
+                'valid' : False,
+                'mov_list' : None
             }
         }
 
@@ -102,18 +110,12 @@ class GameState:
                 if piece.color == cl_side:
                     mov = piece.get_movable() 
                     response['data']['valid'] = True
-                    response['data']['mov_list'] = mov 
-                else:
-                    response['valid'] = False
-            else:
-                response['valid'] = False
-        else:
-            response['valid'] = False
+                    response['data']['mov_list'] = mov
 
         client.send_data(json.dumps(response))
 
 
-    def handle_move(self, data):
+    def handle_move(self, data, client):
         cl_side = data['source']['side']
 
         source = data['data']['source_cords']
@@ -133,6 +135,10 @@ class GameState:
 
                         action = self.build_before_turn_action(move)
                         self.send_to_all(json.dumps(action))
+                        return
+        
+        move = {'source' : source, 'target' : target}
+        client.send_data(json.dumps(build_invalid_move_action(move))
 
 
     def make_move(self, source, target):
