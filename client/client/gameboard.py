@@ -104,8 +104,7 @@ class Gameboard:
                     else:
                         side_col = 'black'
 
-                    if piece['color'] == side_col:
-                        print((x, y))
+                    if piece['color'] == side_col: 
 
                         self.unselect_all()
                         self.selected = (x, y)

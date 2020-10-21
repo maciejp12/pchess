@@ -1,6 +1,7 @@
 import socket
 from threading import Thread
 import json
+from random import randint
 
 
 class ClientConnection:
@@ -12,7 +13,7 @@ class ClientConnection:
         self.serv_addr = '127.0.0.1'
         self.serv_port = 6667
         self.active = True
-        self.name = 'temp_name'
+        self.name = 'temp_name' + str(randint(0, 1024))
 
 
     def connect(self):
@@ -60,17 +61,18 @@ class ClientConnection:
 
                 for s in splited:
                     data_json = json.loads(s) 
+                    form = data_json['form']
                     content = data_json['data']
-                    
+                     
                     green = '\033[92m'
                     white = '\033[00m'
                     print(f'{green}RECIEVED:{data_json}{white}')
 
-                    if data_json['form'] == 'signal':
+                    if form == 'signal':
                         self.parse_signal(content)
-                    elif data_json['form'] == 'action':
+                    elif form == 'action':
                         self.parse_action(content)
-                    elif data_json['form'] == 'message':
+                    elif form == 'message':
                         self.parse_message(content)
 
             except ConnectionAbortedError:
@@ -80,10 +82,17 @@ class ClientConnection:
 
     def parse_signal(self, data):
         if data['signal_type'] == 'onstart':
+            self.client.waiting = False
+            self.client.connected = True
+            self.client.in_game = True
+
             self.client.gameboard.load_state(data['state'])
             self.client.gameboard.side = data['color']
-            self.client.gameboard.turn = data['turn'] 
-
+            self.client.gameboard.turn = data['turn']
+        elif data['signal_type'] == 'waiting':
+            self.client.waiting = True
+            self.client.connected = True
+            self.client.in_game = False
 
     def parse_action(self, data):
         if data['action_type'] == 'before_turn':

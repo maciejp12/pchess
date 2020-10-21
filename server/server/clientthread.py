@@ -33,15 +33,33 @@ class ClientThread:
 
 
     def parse_data(self, data):
-        data = json.loads(data)
-        form = data['form']
+        sep = '}{'
 
-        if form == 'signal':
-            self.parse_signal(data)
-        elif form == 'message':
-            self.parse_message(data)
-        elif form == 'action':
-            self.parse_action(data)
+        splited = data.split(sep)
+
+        if len(splited) == 2:
+            splited[0] += '}'
+            splited[1] = '{' + splited[1]
+        elif len(splited) > 2:
+            splited[0] += '}'
+            for i in range(1, len(splited) - 1):
+                splited[i] = '{' + splited[i] + '}'
+            splited[-1] = '{' + splited[-1]
+
+        for s in splited:
+            data_json = json.loads(data)
+            form = data_json['form']
+
+            green = '\033[92m'
+            white = '\033[00m'
+            print(f'{green}RECIEVED:{data_json}{white}')
+
+            if form == 'signal':
+                self.parse_signal(data_json)
+            elif form == 'message':
+                self.parse_message(data_json)
+            elif form == 'action':
+                self.parse_action(data_json)
 
     
     def parse_signal(self, data):
@@ -51,6 +69,8 @@ class ClientThread:
         if signal == 'connect':
             self.name = source['name']
             self.id = self.server.connected_clients.index(self)
+            #TODO only on connected gamestate (select from list later)
+            self.server.game.handle_on_connect(self)
 
         if signal == 'disconnect':
             self.end_connection()
@@ -86,6 +106,11 @@ class ClientThread:
 
 
     def send_data(self, data):
-        encoded = data.encode('utf8')
-        self.connection.send(encoded)
+        if self.active:
+            blue = '\033[94m'
+            white = '\033[00m'
+            print(f'{blue}SENDING :{data}{white}')
+
+            encoded = data.encode('utf8')
+            self.connection.send(encoded)
 

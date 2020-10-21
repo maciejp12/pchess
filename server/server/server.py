@@ -44,27 +44,31 @@ class ChessServer:
         conn = None    
         
         while self.running:
-            #try:
-            conn, addr = self.server.accept()
-            self.handle_client(addr, conn)
-            #except:
-            #    print('conn error(listening)')
-            #    self.running = False
-            #    self.on_disconnect()
+            try:
+                conn, addr = self.server.accept()
+                self.handle_client(addr, conn)
+            except:
+                print('conn error(listening)')
+                self.running = False
+                self.on_disconnect()
 
 
     def handle_client(self, addr, conn):
-        print('new client : (' + str(addr) + ', ' + str(conn) + ')')
+        #print('new client : (' + str(addr) + ', ' + str(conn) + ')')
         new_client = ClientThread(addr, conn, self)
         self.connected_clients.append(new_client)
         new_client.start_connection()
         self.game.add_client(new_client)
 
-        print(self.connected_clients)
+        #print(self.connected_clients)
 
 
 
     def send_to_client(self, client, data):
+        """
+            send data to one client
+        """
+
         client.send_data(data)
 
 

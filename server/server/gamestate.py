@@ -31,6 +31,18 @@ class GameState:
                 self.on_start()
 
 
+    def handle_on_connect(self, client):
+        if len(self.clients) == 1:
+            if self.clients[0] == client:
+                wait_signal = {
+                    'form' : 'signal',
+                    'data' : {
+                        'signal_type' : 'waiting'
+                    }
+                }
+                client.send_data(json.dumps(wait_signal))
+
+
     def on_start(self):
         print('STARTING GAME')
         cols = list()

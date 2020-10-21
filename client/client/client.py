@@ -40,9 +40,14 @@ class Client:
         self.submit_name = SubmitName(600, 50, 150, 40, self.main_font, 
                                       'submit', self)
 
+        self.block_input = False
+        self.connected = False
+        self.waiting = False
+        self.in_game = False
+
         self.conn = None
-        self.conn = ClientConnection(self)
-        self.conn.connect()
+        #self.conn = ClientConnection(self)
+        #self.conn.connect()
 
 
     def start(self):
@@ -65,8 +70,10 @@ class Client:
 
         for event in pygame.event.get():
 
-            self.name_input.handle_event(event)
-            self.submit_name.handle_event(event)
+            if not self.block_input:
+                self.name_input.handle_event(event)
+                self.submit_name.handle_event(event)
+            
             self.gameboard.handle_click(event)
 
             if event.type == pygame.QUIT: 
@@ -98,9 +105,12 @@ class Client:
     def draw(self, delta):
         self.surface.fill((0, 0, 0))
 
-        self.gameboard.draw(self.surface)
-        self.name_input.draw(self.surface)
-        self.submit_name.draw(self.surface)
+        if self.in_game:
+            self.gameboard.draw(self.surface)
+
+        if not self.connected:
+            self.name_input.draw(self.surface)
+            self.submit_name.draw(self.surface)
         
         if self.show_debug:
             t_str = ' turn=' + str(self.gameboard.turn)
@@ -114,3 +124,9 @@ class Client:
 
         pygame.display.flip()
 
+
+    def init_connection(self, new_name):
+        self.block_input = True 
+        self.conn = ClientConnection(self)
+        self.conn.name = new_name
+        self.conn.connect()
