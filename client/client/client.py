@@ -35,19 +35,14 @@ class Client:
         self.gameboard = Gameboard(0, 0, 512, 512)
         self.gameboard.set_client(self)
 
+        self.name_input = TextInput(600, 0, 160, 40, self.main_font)
+
+        self.submit_name = SubmitName(600, 50, 150, 40, self.main_font, 
+                                      'submit', self)
+
         self.conn = None
         self.conn = ClientConnection(self)
         self.conn.connect()
-
-        self.name_input = TextInput(600, 0, 160, 40, self.main_font)
-
-        x = 600
-        y = 50
-        w = 160
-        h = 40
-        t = 'submit'
-
-        self.submit_name = SubmitName(x, y, w, h, self.main_font, t, self)
 
 
     def start(self):
