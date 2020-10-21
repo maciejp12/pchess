@@ -138,7 +138,7 @@ class GameState:
                         return
         
         move = {'source' : source, 'target' : target}
-        client.send_data(json.dumps(build_invalid_move_action(move))
+        client.send_data(json.dumps(build_invalid_move_action(move)))
 
 
     def make_move(self, source, target):

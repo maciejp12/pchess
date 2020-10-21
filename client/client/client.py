@@ -21,7 +21,7 @@ class Client:
         self.main_font = pygame.font.Font('./resources/Ubuntu-R.ttf', 17)
         self.debug_text = self.main_font.render('', True, (0, 128, 128))
 
-        self.width = 1280
+        self.width = 800
         self.height = 600
 
         self.running = True
@@ -31,21 +31,23 @@ class Client:
         self.clock = pygame.time.Clock()
         self.max_fps = 60.0
         self.show_debug = True
+        
+        self.gameboard = Gameboard(0, 0, 512, 512)
+        self.gameboard.set_client(self)
+
         self.conn = None
         self.conn = ClientConnection(self)
         self.conn.connect()
 
-        self.name_input = TextInput(1000, 0, 160, 40, self.main_font)
+        self.name_input = TextInput(600, 0, 160, 40, self.main_font)
 
-        x = 1000
+        x = 600
         y = 50
         w = 160
         h = 40
         t = 'submit'
 
         self.submit_name = SubmitName(x, y, w, h, self.main_font, t, self)
-        self.gameboard = Gameboard(0, 0, 512, 512)
-        self.gameboard.set_client(self)
 
 
     def start(self):

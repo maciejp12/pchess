@@ -61,6 +61,10 @@ class ClientConnection:
                 for s in splited:
                     data_json = json.loads(s) 
                     content = data_json['data']
+                    
+                    green = '\033[92m'
+                    white = '\033[00m'
+                    print(f'{green}RECIEVED:{data_json}{white}')
 
                     if data_json['form'] == 'signal':
                         self.parse_signal(content)
@@ -75,7 +79,6 @@ class ClientConnection:
 
 
     def parse_signal(self, data):
-        print('RECIEVED SIGNAL: ' + str(data))
         if data['signal_type'] == 'onstart':
             self.client.gameboard.load_state(data['state'])
             self.client.gameboard.side = data['color']
@@ -83,7 +86,6 @@ class ClientConnection:
 
 
     def parse_action(self, data):
-        print('RECIEVED ACTION : ' + str(data))
         if data['action_type'] == 'before_turn':
             self.client.gameboard.update_turn(data)
         elif data['action_type'] == 'movable_response':
@@ -98,7 +100,9 @@ class ClientConnection:
 
     def send(self, data):
         if self.active:
-            print('sending to server : ' + str(data))
+            blue = '\033[94m'
+            white = '\033[00m'
+            print(f'{blue}SENDING :{data}{white}')
             self.client_socket.send(data.encode('utf8'))
 
 
