@@ -150,13 +150,15 @@ class GameState:
                         return
         
         move = {'source' : source, 'target' : target}
-        client.send_data(json.dumps(build_invalid_move_action(move)))
+        client.send_data(json.dumps(self.build_invalid_move_action(move)))
 
 
     def make_move(self, source, target):
         source_piece = self.board[source[0]][source[1]]
-        target_field = self.board[source[0]][source[1]]
+        target_field = self.board[target[0]][target[1]]
+
         hit = False
+
         if target_field != None:
             hit = True
 
