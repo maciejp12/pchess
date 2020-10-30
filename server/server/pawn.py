@@ -24,7 +24,6 @@ class Pawn(Piece):
 
     def __init__(self, x, y, color, state):
         self.on_init(x, y, color, state)
-        self.idle = True
 
 
     def get_movable(self):
@@ -72,9 +71,4 @@ class Pawn(Piece):
 
 
         return movables
-
-
-    def after_move(self):
-        if self.idle:
-            self.idle = False
 

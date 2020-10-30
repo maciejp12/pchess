@@ -16,10 +16,12 @@ class Piece:
         self.color = color
         self.state = state
         self.state.board[x][y] = self
+        self.idle = True
 
 
     def after_move(self):
-        pass
+        if self.idle:
+            self.idle = False
 
 
     def piece_to_json(self):
