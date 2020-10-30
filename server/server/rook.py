@@ -2,7 +2,7 @@ from .piece import Piece
 from .linearpiece import LinearPiece
 
 
-class Tower(LinearPiece):
+class Rook(LinearPiece):
 
 
     init_fields = ({'position' : (0, 0), 'color' : Piece.black},

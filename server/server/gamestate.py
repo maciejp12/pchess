@@ -1,5 +1,5 @@
 from .pawn import Pawn
-from .tower import Tower
+from .rook import Rook
 from .knight import Knight
 from .bishop import Bishop
 from .queen import Queen
@@ -162,6 +162,11 @@ class GameState:
         if target_field != None:
             hit = True
 
+        source_pre = source_piece.piece_to_json()
+        target_pre = None
+        if hit:
+            target_pre = target_field.piece_to_json()
+
         self.board[target[0]][target[1]] = source_piece
         self.board[source[0]][source[1]] = None
         source_piece.x = target[0]
@@ -172,7 +177,11 @@ class GameState:
         move_log = {
             'source' : source,
             'target' : target,
-            'hit' : hit
+            'hit' : hit,
+            'log' : {
+                'source_pre' : source_pre,
+                'target_pre' : target_pre
+            }
         }
 
         return move_log
@@ -193,7 +202,7 @@ class GameState:
 
 
     def init_pieces(self):
-        types = (King, Queen, Bishop, Knight, Tower, Pawn)
+        types = (King, Queen, Bishop, Knight, Rook, Pawn)
         
         for piece in types:
             for field in piece.init_fields:
@@ -203,14 +212,12 @@ class GameState:
     
 
     def state_to_json(self):
-        result = []
+        result = list()
         
         for i in range(0, self.size):
             for j in range(0, self.size):
                 if self.board[j][i] != None:
                     piece = self.board[j][i]
-                    result.append({'cord' : (j, i),
-                                   'type' : type(piece).__name__.lower(),
-                                   'color' : piece.color})
+                    result.append(piece.piece_to_json())
 
         return result

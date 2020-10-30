@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..')
 from server.gamestate import GameState
 from server.piece import Piece
 from server.pawn import Pawn
-from server.tower import Tower
+from server.rook import Rook
 from server.knight import Knight
 from server.bishop import Bishop
 from server.queen import Queen
@@ -185,13 +185,13 @@ class PieceTest(unittest.TestCase):
         self.assertSetEqual(actual, expected)
 
 
-    def test_tower_movable(self):
+    def test_rook_movable(self):
         state = GameState()
 
         x, y = 3, 6
-        tower = Tower(x, y, Piece.white, state)
+        rook = Rook(x, y, Piece.white, state)
 
-        actual = set(tower.get_movable())
+        actual = set(rook.get_movable())
         expected = {(4, 6), (5, 6), (6, 6), (7, 6),
                     (2, 6), (1, 6), (0, 6),
                     (3, 7),
@@ -202,7 +202,7 @@ class PieceTest(unittest.TestCase):
         blocker_a = Pawn(3, 7, Piece.white, state)
         blocker_b = Pawn(1, 6, Piece.white, state)
 
-        actual = set(tower.get_movable())
+        actual = set(rook.get_movable())
         expected = {(4, 6), (5, 6), (6, 6), (7, 6),
                     (2, 6),
                     (3, 5), (3, 4), (3, 3), (3, 2), (3, 1), (3, 0)}
@@ -210,16 +210,16 @@ class PieceTest(unittest.TestCase):
         self.assertSetEqual(actual, expected)
 
 
-    def test_tower_target_movable(self):
+    def test_rook_target_movable(self):
         state = GameState()
 
         x, y = 3, 6
-        tower = Tower(x, y, Piece.white, state)
+        rook = Rook(x, y, Piece.white, state)
         
         target_a = Pawn(3, 3, Piece.black, state)
         target_b = Pawn(4, 6, Piece.black, state)
 
-        actual = set(tower.get_movable())
+        actual = set(rook.get_movable())
         expected = {(4, 6),
                     (2, 6), (1, 6), (0, 6),
                     (3, 7),

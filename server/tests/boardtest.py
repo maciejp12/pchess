@@ -8,7 +8,7 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/..')
 from server.gamestate import GameState
 from server.piece import Piece
 from server.pawn import Pawn
-from server.tower import Tower
+from server.rook import Rook
 from server.knight import Knight
 from server.bishop import Bishop
 from server.queen import Queen
@@ -70,8 +70,8 @@ class BoardTest(unittest.TestCase):
             self.assertIsInstance(state.board[i][y], Pawn)
             self.assertEqual(piece.color, Piece.white)
 
-        black_towers = {state.board[0][0], state.board[7][0]}
-        white_towers = {state.board[0][7], state.board[7][7]}
+        black_rooks = {state.board[0][0], state.board[7][0]}
+        white_rooks = {state.board[0][7], state.board[7][7]}
 
         black_knights = {state.board[1][0], state.board[6][0]}
         white_knights = {state.board[1][7], state.board[6][7]}
@@ -85,12 +85,12 @@ class BoardTest(unittest.TestCase):
         black_king = state.board[4][0]
         white_king = state.board[4][7]
 
-        for piece in black_towers:
-            self.assertIsInstance(piece, Tower)
+        for piece in black_rooks:
+            self.assertIsInstance(piece, Rook)
             self.assertEqual(piece.color, Piece.black)
 
-        for piece in white_towers:
-            self.assertIsInstance(piece, Tower)
+        for piece in white_rooks:
+            self.assertIsInstance(piece, Rook)
             self.assertEqual(piece.color, Piece.white)
 
 

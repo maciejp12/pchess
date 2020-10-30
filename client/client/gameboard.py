@@ -22,7 +22,7 @@ class Gameboard:
         self.piece_images = {
             'w_piece' : pygame.image.load(path + 'w_test_piece.png'),
             'w_pawn' : pygame.image.load(path + 'w_pawn_piece.png'),
-            'w_tower' : pygame.image.load(path + 'w_tower_piece.png'),
+            'w_rook' : pygame.image.load(path + 'w_rook_piece.png'),
             'w_knight' : pygame.image.load(path + 'w_knight_piece.png'),
             'w_bishop' : pygame.image.load(path + 'w_bishop_piece.png'),
             'w_queen' : pygame.image.load(path + 'w_queen_piece.png'),
@@ -30,7 +30,7 @@ class Gameboard:
 
             'b_piece' : pygame.image.load(path + 'b_test_piece.png'),
             'b_pawn' : pygame.image.load(path + 'b_pawn_piece.png'),
-            'b_tower' : pygame.image.load(path + 'b_tower_piece.png'),
+            'b_rook' : pygame.image.load(path + 'b_rook_piece.png'),
             'b_knight' : pygame.image.load(path + 'b_knight_piece.png'),
             'b_bishop' : pygame.image.load(path + 'b_bishop_piece.png'),
             'b_queen' : pygame.image.load(path + 'b_queen_piece.png'),

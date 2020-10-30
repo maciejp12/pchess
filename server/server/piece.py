@@ -21,3 +21,12 @@ class Piece:
     def after_move(self):
         pass
 
+
+    def piece_to_json(self):
+        result = dict()
+
+        return {'cord' : (self.x, self.y),
+                'type' : type(self).__name__.lower(),
+                'color' : self.color
+                }
+
