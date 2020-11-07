@@ -25,6 +25,15 @@ class GameState:
 
 
     def add_client(self, client):
+        """
+            Add a client to clients list is its empty
+            If there is already one client connected and second one 
+            and start game
+            
+            If there are at least two clients in clients list
+            do nothing
+        """
+
         if len(self.clients) < 2:
             self.clients.append(client)
             if len(self.clients) == 2:
@@ -32,6 +41,11 @@ class GameState:
 
 
     def handle_on_connect(self, client):
+        """
+            After only one client is connected to game send to the only client
+            `waiting for second client` signal
+        """
+
         if len(self.clients) == 1:
             if self.clients[0] == client:
                 wait_signal = {
@@ -44,6 +58,14 @@ class GameState:
 
 
     def on_start(self):
+        """
+            Called after two connected clients are on game clients list
+
+            Give clients randomly selected side(black(1) or white(0) color),
+            initialize pieces on board and send to both clients signal with
+            color and board data
+        """
+
         print('STARTING GAME')
         cols = list()
         cols.append(random.randint(0, 1))
@@ -61,10 +83,13 @@ class GameState:
         
         initstate = self.build_initstate_signal(cols[1])
         self.clients[1].send_data(json.dumps(initstate))
- 
 
 
     def build_initstate_signal(self, color):
+        """
+            Build signal with all pieces on board data
+        """
+
         initstate = {
             'form' : 'signal',
             'data' : {
@@ -103,7 +128,7 @@ class GameState:
         return invalid
 
 
-    def handle_get_movable(self, data, client): 
+    def handle_get_movable(self, data, client):
         cl_side = data['source']['side']
         cords = data['data']['cords']
 
@@ -120,7 +145,7 @@ class GameState:
             piece = self.board[cords[0]][cords[1]]
             if piece != None:
                 if piece.color == cl_side:
-                    mov = piece.get_movable() 
+                    mov = piece.get_movable()
                     response['data']['valid'] = True
                     response['data']['mov_list'] = mov
 
@@ -133,7 +158,7 @@ class GameState:
         source = data['data']['source_cords']
         target = data['data']['target_cords']
 
-        if self.cur_turn == cl_side:     
+        if self.cur_turn == cl_side:
             piece = self.board[source[0]][source[1]]
             if piece != None:
                 if piece.color == cl_side:
@@ -148,7 +173,7 @@ class GameState:
                         action = self.build_before_turn_action(move)
                         self.send_to_all(json.dumps(action))
                         return
-        
+
         move = {'source' : source, 'target' : target}
         client.send_data(json.dumps(self.build_invalid_move_action(move)))
 
@@ -187,6 +212,10 @@ class GameState:
         return move_log
 
 
+    def is_checked(self, board, side):
+        checked = False
+    
+
     def send_to_all(self, data):
         for client in self.clients:
             client.send_data(data)
@@ -209,7 +238,7 @@ class GameState:
                 pos = field['position']
                 col = field['color']
                 self.board[pos[0]][pos[1]] = piece(pos[0], pos[1], col, self)
-    
+
 
     def state_to_json(self):
         result = list()
@@ -221,3 +250,4 @@ class GameState:
                     result.append(piece.piece_to_json())
 
         return result
+
