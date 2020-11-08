@@ -104,6 +104,10 @@ class GameState:
 
 
     def build_before_turn_action(self, move):
+        """
+            Build signal with data about last move made
+        """
+
         before = {
             'form' : 'action',
             'data' : {
@@ -117,6 +121,10 @@ class GameState:
 
 
     def build_invalid_move_action(self, move):
+        """
+            Build signal with data about invalid move request
+        """
+
         invalid = {
             'form' : 'action',
             'data' : {
@@ -129,6 +137,18 @@ class GameState:
 
 
     def handle_get_movable(self, data, client):
+        """
+            Handle get_movable request signal from client
+            
+            Gets data of selected piece by client, sends to only this client
+            data signal with all possible moves of the piece in current
+            board state
+
+            If given cord is invalid(no piece in cords, not clients turn
+            or piece is not clients color) send back invalide response to
+            client
+        """
+
         cl_side = data['source']['side']
         cords = data['data']['cords']
 
@@ -153,6 +173,16 @@ class GameState:
 
 
     def handle_move(self, data, client):
+        """
+            Handle move request signal from client
+
+            If the move is valid call make_move, change current turn to
+            opposite and build before turn action and send it to all clients
+
+            If the move is invalid build invalid action move and send it to
+            client from given move request
+        """
+
         cl_side = data['source']['side']
 
         source = data['data']['source_cords']
@@ -179,6 +209,17 @@ class GameState:
 
 
     def make_move(self, source, target):
+        """
+            Moves source piece to target fieed
+
+            Field of source piece is set to None
+
+            Returns move log with source and target fields before and after
+            making move and if target field was not None before moving
+            hit is set to True if target field was None before moving
+            hit is set to False
+        """
+
         source_piece = self.board[source[0]][source[1]]
         target_field = self.board[target[0]][target[1]]
 
@@ -217,11 +258,23 @@ class GameState:
     
 
     def send_to_all(self, data):
+        """
+            Send data to all clients connected to this game
+        """
+
         for client in self.clients:
             client.send_data(data)
 
 
     def build_board(self):
+        """
+            Build initial empty chess board
+
+            Board is represented as list (len equal to self.size) of lists
+            of length of self.size, initially all elements of them are set to
+            None
+        """
+
         self.board = []
         
         for i in range(0, self.size):
@@ -231,6 +284,11 @@ class GameState:
 
 
     def init_pieces(self):
+        """
+            Make standard initial chess setup, add pieces to board
+            Called after two players connect to game and game is ready to start
+        """
+        
         types = (King, Queen, Bishop, Knight, Rook, Pawn)
         
         for piece in types:
@@ -241,6 +299,10 @@ class GameState:
 
 
     def state_to_json(self):
+        """
+            Return current game state (data of all pieces on board) as dict
+        """
+
         result = list()
         
         for i in range(0, self.size):

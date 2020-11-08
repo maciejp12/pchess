@@ -54,19 +54,15 @@ class ChessServer:
 
 
     def handle_client(self, addr, conn):
-        #print('new client : (' + str(addr) + ', ' + str(conn) + ')')
         new_client = ClientThread(addr, conn, self)
         self.connected_clients.append(new_client)
         new_client.start_connection()
         self.game.add_client(new_client)
 
-        #print(self.connected_clients)
-
-
 
     def send_to_client(self, client, data):
         """
-            send data to one client
+            Send data to one client
         """
 
         client.send_data(data)
@@ -74,7 +70,7 @@ class ChessServer:
 
     def send_to_all(self, data):
         """
-            send data to all connected clients
+            Send data to all connected clients
         """
 
         for client in self.connected_clients:
@@ -83,8 +79,8 @@ class ChessServer:
     
     def on_disconnect(self):
         """
-            send disconnect signal to all connected clients
-            close all connections before shuting down server
+            Send disconnect signal to all connected clients
+            Close all connections before shuting down server
         """
 
         for client in self.connected_clients:
@@ -94,7 +90,7 @@ class ChessServer:
 
     def remove_client(self, client):
         """
-            remove client form clients list
+            Remove client form clients list
         """
 
         self.connected_clients.remove(client)
