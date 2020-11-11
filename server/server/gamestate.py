@@ -200,6 +200,8 @@ class GameState:
                         else:
                             self.cur_turn = 1
 
+                        self.is_checked(self.board, self.cur_turn)
+
                         action = self.build_before_turn_action(move)
                         self.send_to_all(json.dumps(action))
                         return
@@ -254,8 +256,48 @@ class GameState:
 
 
     def is_checked(self, board, side):
+        """
+            Returns True if king of given side on given board state
+            is being checked, else returns False
+
+            If there is no king of given side on given board returns False
+        """
+
         checked = False
-    
+
+        oponent_side = 0
+        if side == 0:
+            oponent_side = 1
+
+        side_king = None
+        side_king_cords = None
+
+        for i in range(0, len(self.board)):
+            row = self.board[i]
+            for j in range(0, len(row)):
+                piece = self.board[i][j]
+                if piece != None:
+                    if piece.color == side:
+                        if piece.piece_to_json()['type'] == 'king':
+                            side_king = piece
+                            side_king_cords = (i, j)
+                            break
+
+        if side_king == None: 
+            return checked
+ 
+
+        for row in self.board:
+            for piece in row:
+                if piece != None:
+                    if piece.color == oponent_side:
+                        for field in piece.get_movable():
+                            if field == side_king_cords:
+                                checked = True
+
+
+        return checked
+
 
     def send_to_all(self, data):
         """
