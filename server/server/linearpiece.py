@@ -12,7 +12,7 @@ class LinearPiece(Piece):
 
 
     def get_movable(self):
-        return self.get_movable_lines(self.move_cords)
+        return self.remove_check_moves(self.get_movable_lines(self.move_cords))
 
     
     def get_movable_line(self, dx, dy, mov):

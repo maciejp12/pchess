@@ -112,6 +112,31 @@ class BoardTest(unittest.TestCase):
             self.assertEqual(piece.color, Piece.white)
     
 
+    def test_is_checked(self):
+        pass
+
+
+    def test_parse_board(self):
+        state = GameState()
+
+        pawn = Pawn(3, 6, Piece.white, state)
+        queen = Queen(7, 7, Piece.black, state)
+
+        actual = state.parse_board()
+
+        expected = list()
+
+        for i in range(0, GameState.size):
+            expected.append(list())
+            for j in range(0, GameState.size):
+                expected[i].append(None)
+
+        expected[3][6] = {'cord' : (3, 6), 'type' : 'pawn', 'color' : Piece.white}
+        expected[7][7] = {'cord' : (7, 7), 'type' : 'queen', 'color' : Piece.black}
+    
+        self.assertListEqual(actual, expected)
+
+
     def test_board_to_json(self):
         state = GameState()
 

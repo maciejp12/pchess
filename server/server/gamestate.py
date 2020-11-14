@@ -200,6 +200,7 @@ class GameState:
                         else:
                             self.cur_turn = 1
 
+                        #TODO check if is checked
                         self.is_checked(self.board, self.cur_turn)
 
                         action = self.build_before_turn_action(move)
@@ -232,6 +233,7 @@ class GameState:
 
         source_pre = source_piece.piece_to_json()
         target_pre = None
+        
         if hit:
             target_pre = target_field.piece_to_json()
 
@@ -272,10 +274,10 @@ class GameState:
         side_king = None
         side_king_cords = None
 
-        for i in range(0, len(self.board)):
-            row = self.board[i]
+        for i in range(0, len(board)):
+            row = board[i]
             for j in range(0, len(row)):
-                piece = self.board[i][j]
+                piece = board[i][j]
                 if piece != None:
                     if piece.color == side:
                         if piece.piece_to_json()['type'] == 'king':
@@ -287,9 +289,10 @@ class GameState:
             return checked
  
 
-        for row in self.board:
+        for row in board:
             for piece in row:
                 if piece != None:
+                    print(piece.piece_to_json())
                     if piece.color == oponent_side:
                         for field in piece.get_movable():
                             if field == side_king_cords:
@@ -338,6 +341,45 @@ class GameState:
                 pos = field['position']
                 col = field['color']
                 self.board[pos[0]][pos[1]] = piece(pos[0], pos[1], col, self)
+
+
+    def parse_board(self):
+        """
+            Return current game state board as list of lists of dicts of pieces
+            If field on board in (x, y) cords is None, field on result list
+            in (x, y) is None too
+        """
+
+
+        result = list()
+
+        for i in range(0, self.size):
+            result.append(list())
+            for j in range(0, self.size):
+                if self.board[i][j] == None:
+                    result[i].append(None)
+                else:
+                    piece = self.board[i][j]
+                    result[i].append(piece.piece_to_json())
+        
+        return result
+
+
+    def copy_state(self):
+        copy = GameState()
+
+        for i in range(0, self.size):
+            for j in range(0, self.size):
+                piece = self.board[i][j]
+                if piece != None:
+                    piece_class = piece.__class__
+                    piece_copy = piece_class(piece.x, piece.y, piece.color, 
+                                             copy)
+                    
+                    piece_copy.idle = piece.idle
+                    copy.board[i][j] = piece_copy
+
+        return copy
 
 
     def state_to_json(self):

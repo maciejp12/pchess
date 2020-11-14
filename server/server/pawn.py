@@ -69,6 +69,7 @@ class Pawn(Piece):
                 if board[self.x][self.y + dy] == None:
                     movables.append((self.x, y_pos))
 
-
+        
+        self.remove_check_moves(movables)
         return movables
 

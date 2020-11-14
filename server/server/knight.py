@@ -35,6 +35,7 @@ class Knight(Piece):
                     if board[x_pos][y_pos].color != self.color:
                         movables.append((x_pos, y_pos))
 
+        self.remove_check_moves(movables)
         return movables
 
 
