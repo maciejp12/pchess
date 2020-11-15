@@ -26,7 +26,7 @@ class Pawn(Piece):
         self.on_init(x, y, color, state)
 
 
-    def get_movable(self):
+    def get_movable(self, depth=0):
         board = self.state.board
         limit = 8
 
@@ -70,6 +70,8 @@ class Pawn(Piece):
                     movables.append((self.x, y_pos))
 
         
-        self.remove_check_moves(movables)
+        if depth < 1:
+            self.remove_check_moves(movables, depth)
+        
         return movables
 

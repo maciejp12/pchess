@@ -11,8 +11,11 @@ class LinearPiece(Piece):
         self.on_init(x, y, color, state)
 
 
-    def get_movable(self):
-        return self.remove_check_moves(self.get_movable_lines(self.move_cords))
+    def get_movable(self, depth=0):
+        movables = self.get_movable_lines(self.move_cords)
+        if depth < 1:
+            self.remove_check_moves(movables, depth)
+        return movables
 
     
     def get_movable_line(self, dx, dy, mov):

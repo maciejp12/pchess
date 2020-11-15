@@ -6,13 +6,13 @@ class Piece:
     init_fields = ()
 
 
-    def get_movable(self):
+    def get_movable(self, depth=0):
         return list()
 
 
-    def remove_check_moves(self, moves):
+    def remove_check_moves(self, moves, depth=0):
         to_remove = list()
-        print('moves pre' + str(moves))
+
         for move in moves:
             state_copy = self.state.copy_state()
             board_copy = state_copy.board
@@ -23,12 +23,12 @@ class Piece:
             self_copy.y = move[1]
             self_copy.idle = False
 
-            if state_copy.is_checked(board_copy, self.color):
+            if state_copy.is_checked(board_copy, self.color, depth + 1):
                 to_remove.append(move)
         
         for move in to_remove:
             moves.remove(move)
-        print('moves post' + str(moves))
+        
         
 
 

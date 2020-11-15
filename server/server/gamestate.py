@@ -257,7 +257,7 @@ class GameState:
         return move_log
 
 
-    def is_checked(self, board, side):
+    def is_checked(self, board, side, level=0):
         """
             Returns True if king of given side on given board state
             is being checked, else returns False
@@ -291,10 +291,9 @@ class GameState:
 
         for row in board:
             for piece in row:
-                if piece != None:
-                    print(piece.piece_to_json())
+                if piece != None: 
                     if piece.color == oponent_side:
-                        for field in piece.get_movable():
+                        for field in piece.get_movable(level):
                             if field == side_king_cords:
                                 checked = True
 

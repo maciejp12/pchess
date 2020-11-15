@@ -18,7 +18,7 @@ class Knight(Piece):
         self.on_init(x, y, color, state)
     
 
-    def get_movable(self):
+    def get_movable(self, depth=0):
         board = self.state.board
         limit = 8
 
@@ -35,7 +35,8 @@ class Knight(Piece):
                     if board[x_pos][y_pos].color != self.color:
                         movables.append((x_pos, y_pos))
 
-        self.remove_check_moves(movables)
+        if depth < 1:
+            self.remove_check_moves(movables, depth)
         return movables
 
 
