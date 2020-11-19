@@ -406,6 +406,135 @@ class PieceTest(unittest.TestCase):
         self.assertSetEqual(actual, expected)
 
 
+    def test_check(self):
+        state = GameState()
+
+        x, y = 3, 6
+
+        white_king = King(x, y, Piece.white, state)
+        black_pawn = Pawn(x - 1, y - 1, Piece.black, state)
+
+        actual = state.is_checked(state.board, 0)
+        self.assertTrue(actual)
+        
+        actual = state.is_checked(state.board, 1)
+        self.assertFalse(actual)
+
+
+        state.board[x - 1][y - 1] = None
+
+        black_pawn = Pawn(x - 1, y - 2, Piece.black, state)
+
+        actual = state.is_checked(state.board, 0)
+        self.assertFalse(actual)
+
+        actual = state.is_checked(state.board, 1)
+        self.assertFalse(actual)
+
+
+        state.board[x - 1][y - 2] = None
+
+        black_rook = Rook(x, y - 1, Piece.black, state)
+
+        actual = state.is_checked(state.board, 0)
+        self.assertTrue(actual)
+
+        actual = set(white_king.get_movable())
+        expected = {(3, 5),
+                    (2, 6), (4, 6),
+                    (2, 7), (4, 7)}
+
+        self.assertSetEqual(actual, expected)
+
+
+    def test_check_king_block(self):
+        state = GameState()
+
+        x, y = 3, 6
+
+        white_king = King(x, y, Piece.white, state)
+        black_pawn = Pawn(x, y - 2, Piece.black, state)
+
+        black_pawn.idle = False
+
+        actual = set(white_king.get_movable())
+        expected = {(3, 5),
+                    (2, 6), (4, 6),
+                    (2, 7), (3, 7), (4, 7)}
+
+        self.assertSetEqual(actual, expected)
+        
+        actual = state.is_checked(state.board, 0)
+        self.assertFalse(actual)
+
+        actual = state.is_checked(state.board, 1)
+        self.assertFalse(actual)
+
+
+    def test_check_move_block(self):
+        state = GameState()
+
+        x, y = 3, 6
+
+        white_king = King(x, y, Piece.white, state)
+        white_rook = Rook(x, y - 2, Piece.white, state)
+
+        actual = set(white_king.get_movable())
+        expected = {(2, 5), (3, 5), (4, 5),
+                    (2, 6), (4, 6),
+                    (2, 7), (3, 7), (4, 7)}
+
+        self.assertSetEqual(actual, expected)
+
+        actual = set(white_rook.get_movable())
+        expected = {(3, 3), (3, 2), (3, 1), (3, 0), 
+                    (4, 4), (5, 4), (6, 4), (7, 4),
+                    (3, 5),
+                    (2, 4), (1, 4), (0, 4)}
+
+        self.assertSetEqual(actual, expected)
+
+        actual = state.is_checked(state.board, 0)
+        self.assertFalse(actual)
+        
+
+        black_rook = Rook(x, y - 4, Piece.black, state)
+
+        actual = set(white_king.get_movable())
+        expected = {(2, 5), (3, 5), (4, 5),
+                    (2, 6), (4, 6),
+                    (2, 7), (3, 7), (4, 7)}
+
+        self.assertSetEqual(actual, expected) 
+
+        actual = set(white_rook.get_movable())
+        expected = {(3, 3), (3, 2),   
+                    (3, 5)}
+
+        self.assertSetEqual(actual, expected)
+
+        actual = state.is_checked(state.board, 0)
+        self.assertFalse(actual)
+
+
+        black_queen = Queen(x - 1, y - 4, Piece.black, state)
+
+        actual = set(white_king.get_movable())
+        expected = {(3, 5), (4, 5),
+                    (4, 6),
+                    (3, 7), (4, 7)}
+
+        self.assertSetEqual(actual, expected) 
+
+        actual = set(white_rook.get_movable())
+        expected = {(3, 3), (3, 2),   
+                    (3, 5)}
+
+        self.assertSetEqual(actual, expected)
+
+        actual = state.is_checked(state.board, 0)
+        self.assertFalse(actual)
+
 
 if __name__ == '__main__':
     unittest.main()

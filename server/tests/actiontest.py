@@ -20,6 +20,8 @@ class ActionTest(unittest.TestCase):
         source = (x, y)
         target = (x, y - 1)
 
+        source_pre_json = piece.piece_to_json()
+
         move = state.make_move(source, target)
 
         self.assertIsNone(state.board[x][y])
@@ -33,7 +35,11 @@ class ActionTest(unittest.TestCase):
         expected = {
             'source' : source,
             'target' : target,
-            'hit' : False
+            'hit' : False,
+            'log' : {
+                'source_pre' : source_pre_json,
+                'target_pre' : None
+            }
         }
 
         self.assertDictEqual(actual, expected)
@@ -45,6 +51,9 @@ class ActionTest(unittest.TestCase):
         x, y = 3, 6
         piece = Pawn(x, y, Piece.white, state)
         target_piece = Pawn(x - 1, y - 1, Piece.black, state)
+
+        piece_pre_json = piece.piece_to_json()
+        target_pre_json = target_piece.piece_to_json()
 
         source = (x, y)
         target = (x - 1, y - 1)
@@ -62,7 +71,11 @@ class ActionTest(unittest.TestCase):
         expected = {
             'source' : source,
             'target' : target,
-            'hit' : True
+            'hit' : True,
+            'log' : {
+                'source_pre' : piece_pre_json,
+                'target_pre' : target_pre_json
+            }
         }
 
         self.assertDictEqual(actual, expected)
