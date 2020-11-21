@@ -1,6 +1,8 @@
 import sys
 import os
 import pygame
+import json
+from datetime import datetime
 from .clientconnection import ClientConnection
 from .gameboard import Gameboard
 from .textinput import TextInput
@@ -82,7 +84,8 @@ class Client:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     print('space')
-                
+                if event.key == pygame.K_t:
+                    self.send_message('test_message 1')
                 if not self.name_input.active:
                     if event.key == pygame.K_f:
                         self.show_debug = not self.show_debug
@@ -130,3 +133,24 @@ class Client:
         self.conn = ClientConnection(self)
         self.conn.name = new_name
         self.conn.connect()
+
+
+    def send_message(self, content):
+        if self.conn == None:
+            return
+
+        side = self.gameboard.side
+ 
+        msg = {
+            'source' : {
+                'name' : self.conn.name,
+                'side' : side
+            },
+            'form' : 'message',
+            'data' : {
+                'content' : content, 
+            }
+        }
+
+        self.conn.send(json.dumps(msg))
+

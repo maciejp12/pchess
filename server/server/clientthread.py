@@ -1,4 +1,5 @@
 from threading import Thread
+from datetime import datetime
 import json
 
 
@@ -77,8 +78,23 @@ class ClientThread:
 
     
     def parse_message(self, data):
-        pass
 
+        """
+            After recieving message signal from one of clients respond to all
+            clients in sources client game with message signal with data of 
+            source, recieved message text and current datetime
+        """
+
+        msg_response = {
+            'form' : 'message',
+            'data' : {
+                'source' : data['source'],
+                'message' : data['data']['content'],
+                'datetime' : str(datetime.now())
+            }
+        }
+
+        self.server.game.send_to_all(json.dumps(msg_response))
 
     def parse_action(self, data):
         action = data['data']
