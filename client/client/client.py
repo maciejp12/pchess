@@ -7,6 +7,7 @@ from .clientconnection import ClientConnection
 from .gameboard import Gameboard
 from .textinput import TextInput
 from .submitname import SubmitName
+from .sendmsg import SendMsg
 
 
 class Client:
@@ -42,6 +43,10 @@ class Client:
         self.submit_name = SubmitName(600, 50, 150, 40, self.main_font, 
                                       'submit', self)
 
+        self.msg_input = TextInput(600, 300, 150, 40, self.main_font)
+        self.send_msg = SendMsg(600, 350, 150, 40, self.main_font, 'send',
+                                self)
+
         self.block_input = False
         self.connected = False
         self.waiting = False
@@ -76,8 +81,10 @@ class Client:
                 self.name_input.handle_event(event)
                 self.submit_name.handle_event(event)
             
-            self.gameboard.handle_click(event)
-
+            if self.in_game:
+                self.gameboard.handle_click(event)
+                self.msg_input.handle_event(event)
+                self.send_msg.handle_event(event)
             if event.type == pygame.QUIT: 
                 self.running = False
 
@@ -106,10 +113,12 @@ class Client:
 
     
     def draw(self, delta):
-        self.surface.fill((0, 0, 0))
+        self.surface.fill((30, 30, 30))
 
         if self.in_game:
             self.gameboard.draw(self.surface)
+            self.msg_input.draw(self.surface)
+            self.send_msg.draw(self.surface)
 
         if not self.connected:
             self.name_input.draw(self.surface)

@@ -69,4 +69,15 @@ class TextInput:
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, self.rect)
         surface.blit(self.text_surface, (self.rect.x + 5, self.rect.y + 5))
-        
+
+
+    def set_text(self, new_text):
+        self.text = new_text
+        f = self.font_color
+        self.text_surface = self.font.render(self.text, True, f)
+
+
+    def clear(self):
+        self.set_text('')
+        self.active = False
+
