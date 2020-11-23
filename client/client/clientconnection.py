@@ -104,7 +104,7 @@ class ClientConnection:
 
 
     def parse_message(self, data):
-        pass
+        self.client.handle_message(data)
 
 
     def send(self, data):

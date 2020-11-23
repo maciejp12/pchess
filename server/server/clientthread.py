@@ -89,7 +89,7 @@ class ClientThread:
             'form' : 'message',
             'data' : {
                 'source' : data['source'],
-                'message' : data['data']['content'],
+                'content' : data['data']['content'],
                 'datetime' : str(datetime.now())
             }
         }

@@ -8,6 +8,7 @@ from .gameboard import Gameboard
 from .textinput import TextInput
 from .submitname import SubmitName
 from .sendmsg import SendMsg
+from .msgbox import MsgBox
 
 
 class Client:
@@ -38,14 +39,15 @@ class Client:
         self.gameboard = Gameboard(0, 0, 512, 512)
         self.gameboard.set_client(self)
 
-        self.name_input = TextInput(600, 0, 160, 40, self.main_font)
+        self.name_input = TextInput(600, 520, 200, 40, self.main_font)
 
-        self.submit_name = SubmitName(600, 50, 150, 40, self.main_font, 
+        self.submit_name = SubmitName(600, 560, 200, 40, self.main_font, 
                                       'submit', self)
 
-        self.msg_input = TextInput(600, 300, 150, 40, self.main_font)
-        self.send_msg = SendMsg(600, 350, 150, 40, self.main_font, 'send',
+        self.msg_input = TextInput(540, 520, 260, 40, self.main_font)
+        self.send_msg = SendMsg(540, 560, 260, 40, self.main_font, 'send',
                                 self)
+        self.msg_box = MsgBox(540, 0, 260, 520, self.main_font)
 
         self.block_input = False
         self.connected = False
@@ -53,8 +55,6 @@ class Client:
         self.in_game = False
 
         self.conn = None
-        #self.conn = ClientConnection(self)
-        #self.conn.connect()
 
 
     def start(self):
@@ -68,6 +68,7 @@ class Client:
 
         if self.conn != None:
             self.conn.disconnect()
+
         pygame.display.quit()
         pygame.quit()
         sys.exit()
@@ -110,6 +111,7 @@ class Client:
 
     def update(self, delta):
         self.name_input.update(delta)
+        self.msg_input.update(delta)
 
     
     def draw(self, delta):
@@ -119,6 +121,7 @@ class Client:
             self.gameboard.draw(self.surface)
             self.msg_input.draw(self.surface)
             self.send_msg.draw(self.surface)
+            self.msg_box.draw(self.surface)
 
         if not self.connected:
             self.name_input.draw(self.surface)
@@ -163,3 +166,10 @@ class Client:
 
         self.conn.send(json.dumps(msg))
 
+
+    def handle_message(self, message):
+        if not self.in_game:
+            return
+
+        self.msg_box.add_message(message)
+        
