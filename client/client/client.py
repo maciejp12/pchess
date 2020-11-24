@@ -92,8 +92,7 @@ class Client:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     print('space')
-                if event.key == pygame.K_t:
-                    self.send_message('test_message 1')
+       
                 if not self.name_input.active:
                     if event.key == pygame.K_f:
                         self.show_debug = not self.show_debug
