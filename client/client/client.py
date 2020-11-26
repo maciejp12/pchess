@@ -84,8 +84,15 @@ class Client:
             
             if self.in_game:
                 self.gameboard.handle_click(event)
+                self.msg_box.handle_event(event)
                 self.msg_input.handle_event(event)
                 self.send_msg.handle_event(event)
+
+                if self.msg_input.active:
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_RETURN:
+                            self.send_msg.confirm_send()
+
             if event.type == pygame.QUIT: 
                 self.running = False
 

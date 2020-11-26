@@ -34,21 +34,20 @@ class ClientThread:
 
 
     def parse_data(self, data):
-        sep = '}{'
+        splited = list()
 
-        splited = data.split(sep)
+        decoder = json.JSONDecoder()
+        pos = 0
 
-        if len(splited) == 2:
-            splited[0] += '}'
-            splited[1] = '{' + splited[1]
-        elif len(splited) > 2:
-            splited[0] += '}'
-            for i in range(1, len(splited) - 1):
-                splited[i] = '{' + splited[i] + '}'
-            splited[-1] = '{' + splited[-1]
+        while True:
+            try:
+                cur, pos = decoder.raw_decode(data, pos)
+                splited.append(cur)
+            except json.JSONDecodeError:
+                break
 
-        for s in splited:
-            data_json = json.loads(data)
+
+        for data_json in splited: 
             form = data_json['form']
 
             green = '\033[92m'

@@ -22,10 +22,11 @@ class TextInput:
     
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                self.active = not self.active
-            else:
-                self.active = False
+            if event.button == 1:
+                if self.rect.collidepoint(event.pos):
+                    self.active = not self.active
+                else:
+                    self.active = False
             
             if self.active:
                 self.color = self.active_color

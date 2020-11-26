@@ -44,23 +44,21 @@ class ClientConnection:
         while self.active:
             try:
                 data = self.client_socket.recv(4096).decode('utf8')
-           
-                sep = '}{'
 
-                splited = data.split(sep)
-            
-                if len(splited) == 2:
-                    splited[0] += '}'
-                    splited[1] = '{' + splited[1]
-                elif len(splited) > 2:
-                    splited[0] += '}'
-                    for i in range(1, len(spltied) - 1):
-                        splited[i] = '{' + splited[i] + '}'
-                    splited[-1] = '{' + splited[-1]
+                splited = list()
+
+                decoder = json.JSONDecoder()
+                pos = 0
+
+                while True:
+                    try:
+                        cur, pos = decoder.raw_decode(data, pos)
+                        splited.append(cur)
+                    except json.JSONDecodeError:
+                        break
 
 
-                for s in splited:
-                    data_json = json.loads(s) 
+                for data_json in splited: 
                     form = data_json['form']
                     content = data_json['data']
                      

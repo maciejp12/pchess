@@ -11,8 +11,14 @@ class SendMsg(Button):
 
 
     def action(self, event):
+        self.confirm_send()
+
+
+    def confirm_send(self):
         text = self.client.msg_input.text
 
         if text != '':
             self.client.send_message(text)
-            self.client.msg_input.clear()
+            self.client.msg_input.set_text('')
+
+
