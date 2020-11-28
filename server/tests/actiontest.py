@@ -36,6 +36,7 @@ class ActionTest(unittest.TestCase):
             'source' : source,
             'target' : target,
             'hit' : False,
+            'promotion' : False,
             'log' : {
                 'source_pre' : source_pre_json,
                 'target_pre' : None
@@ -72,6 +73,7 @@ class ActionTest(unittest.TestCase):
             'source' : source,
             'target' : target,
             'hit' : True,
+            'promotion' : False,
             'log' : {
                 'source_pre' : piece_pre_json,
                 'target_pre' : target_pre_json
@@ -79,7 +81,6 @@ class ActionTest(unittest.TestCase):
         }
 
         self.assertDictEqual(actual, expected)
-
 
 
 if __name__ == '__main__':

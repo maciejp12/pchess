@@ -105,6 +105,8 @@ class ClientThread:
         elif action_type == 'move':
             #TODO same as above
             self.server.game.handle_move(data, self)
+        elif action_type == 'promotion_response':
+            self.server.game.handle_promotion_response(data, self)
 
 
     def start_connection(self):

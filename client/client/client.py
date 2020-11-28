@@ -53,6 +53,7 @@ class Client:
         self.connected = False
         self.waiting = False
         self.in_game = False
+        self.handling_promotion = False
 
         self.conn = None
 
@@ -99,7 +100,10 @@ class Client:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     print('space')
-       
+                elif event.key == pygame.K_p:
+                    if self.handling_promotion:
+                        self.gameboard.finish_promotion('queen')
+
                 if not self.name_input.active:
                     if event.key == pygame.K_f:
                         self.show_debug = not self.show_debug
@@ -136,8 +140,9 @@ class Client:
         if self.show_debug:
             t_str = ' turn=' + str(self.gameboard.turn)
             s_str = ' side=' + str(self.gameboard.side)
+            h_pr = ' hp=' + str(self.handling_promotion)
 
-            db_text = str(delta) + t_str + s_str
+            db_text = str(delta) + t_str + s_str + h_pr
             self.debug_text = self.main_font.render(db_text, True, (0, 128, 128))
             self.surface.blit(self.debug_text, (0, 0))
 

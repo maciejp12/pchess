@@ -120,6 +120,19 @@ class GameState:
         return before
 
 
+    def build_promotion_action(self, promotion):
+        promotion_action = {
+            'form' : 'action',
+            'data' : {
+                'action_type' : 'after_promotion',
+                'promotion' : promotion,
+                'cur_turn' : self.cur_turn
+            }
+        }
+
+        return promotion_action
+
+
     def build_invalid_move_action(self, move):
         """
             Build signal with data about invalid move request
@@ -195,6 +208,11 @@ class GameState:
                     if tuple(target) in piece.get_movable():
                         move = self.make_move(source, target)
                         
+                        if move['promotion']:
+                            action = self.build_before_turn_action(move)
+                            client.send_data(json.dumps(action))
+                            return
+
                         if self.cur_turn == 1:
                             self.cur_turn = 0
                         else:
@@ -209,6 +227,41 @@ class GameState:
 
         move = {'source' : source, 'target' : target}
         client.send_data(json.dumps(self.build_invalid_move_action(move)))
+
+
+    def handle_promotion_response(self, data, client):
+        piece_type = data['piece_selected']
+        piece_replacement = None
+        x = data['move']['target'][0]
+        y = data['move']['target'][1]
+        side = self.cur_turn
+
+        if piece_type == 'rook':
+            piece_replacement = Rook(x, y, side, self)
+        elif piece_type == 'knight':
+            piece_replacement = Knight(x, y, side, self)
+        elif piece_type == 'bishop':
+            piece_replacement = Bishop(x, y, side, self)
+        else
+            piece_replacement = Queen(x, y, side, self)
+
+        piece_replacement.idle = False
+        piece_replacement.promoted = True
+
+        if self.cur_turn == 1:
+            self.cur_turn = 0
+        else:
+            self.cur_turn = 1
+
+        #TODO check if cm
+        
+        promotion = {
+            'piece_replacement' : piece_type
+            'cords' : (x, y)
+        }
+
+        action = self.build_promotion_action(promotion)
+        self.send_to_all(json.dumps(action))
 
 
     def make_move(self, source, target):
@@ -243,11 +296,13 @@ class GameState:
         source_piece.y = target[1]
 
         source_piece.after_move()
-
+        promotion = source_piece.is_promoted()
+    
         move_log = {
             'source' : source,
             'target' : target,
             'hit' : hit,
+            'promotion' : promotion,
             'log' : {
                 'source_pre' : source_pre,
                 'target_pre' : target_pre

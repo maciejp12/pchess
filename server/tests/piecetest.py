@@ -185,6 +185,50 @@ class PieceTest(unittest.TestCase):
         self.assertSetEqual(actual, expected)
 
 
+
+    def test_pawn_promotion(self):
+        state = GameState()
+
+        x, y = 0, 2
+        piece = Pawn(x, y, Piece.white, state)
+        piece.idle = False
+
+        actual = piece.is_promoted()
+        self.assertFalse(actual)
+
+        source = (x, y)
+        target = (x, y - 1)
+
+        state.make_move(source, target)
+
+        actual = piece.is_promoted()
+        self.assertFalse(actual)
+
+        source = (x, y - 1)
+        target = (x, y - 2)
+
+        state.make_move(source, target)
+
+        actual = piece.is_promoted()
+        self.assertTrue(actual)
+
+
+        x, y = 3, 6
+        piece = Pawn(x, y, Piece.black, state)
+        piece.idle = False
+
+        actual = piece.is_promoted()
+        self.assertFalse(actual)
+
+        source = (x, y)
+        target = (x, y + 1)
+
+        state.make_move(source, target)
+
+        actual = piece.is_promoted()
+        self.assertTrue(actual)
+        
+
     def test_rook_movable(self):
         state = GameState()
 

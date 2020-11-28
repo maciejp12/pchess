@@ -15,7 +15,7 @@ class Pawn(Piece):
                    
                    {'position' : (0, 6), 'color' : Piece.white},
                    {'position' : (1, 6), 'color' : Piece.white},
-                   {'position' : (2, 6), 'color' : Piece.white},
+                   {'position' : (2, 2), 'color' : Piece.white},
                    {'position' : (3, 6), 'color' : Piece.white},
                    {'position' : (4, 6), 'color' : Piece.white},
                    {'position' : (5, 6), 'color' : Piece.white},
@@ -75,3 +75,13 @@ class Pawn(Piece):
         
         return movables
 
+
+    def is_promoted(self):
+        if self.color == Piece.white:
+            if self.y == 0:
+                return True
+        elif self.color == Piece.black:
+            if self.y == 7:
+                return True
+        
+        return False

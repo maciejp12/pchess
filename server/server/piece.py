@@ -39,11 +39,16 @@ class Piece:
         self.state = state
         self.state.board[x][y] = self
         self.idle = True
+        self.promoted = False
 
 
     def after_move(self):
         if self.idle:
             self.idle = False
+
+
+    def is_promoted(self):
+        return False
 
 
     def piece_to_json(self):

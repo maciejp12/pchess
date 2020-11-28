@@ -46,6 +46,8 @@ class Gameboard:
         self.fields = []
         self.selected = None
 
+        self.promotion_move = None
+
         for i in range(0, self.size):
             self.fields.append([])
             for j in range(0, self.size):
@@ -211,8 +213,32 @@ class Gameboard:
         source_field['piece']['type'] = None
         source_field['piece']['color'] = None
 
+        if move['promotion']:
+            self.handle_promotion(move)
+            return
+
         self.turn = data['cur_turn']
         self.waiting = False
+
+
+    def handle_promotion(self, move):
+        self.promotion_move = move
+        self.client.handling_promotion = True
+
+
+    def finish_promotion(self, piece_type):
+        promotion_response = {
+            'action_type' : 'promotion_response',
+            'piece_selected' : piece_type,
+            'move' : self.promotion_move
+        }
+
+        action = self.build_action_package()
+        action['data'] = promotion_response
+        self.send_to_server(json.dumps(action))
+
+        self.promotion_move = None
+        self.client.handling_promotion = False
 
 
     def on_invalid_move(self, data):
