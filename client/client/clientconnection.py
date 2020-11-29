@@ -99,6 +99,8 @@ class ClientConnection:
             self.client.gameboard.handle_movable_response(data)
         elif data['action_type'] == 'invalid_move':
             self.client.gameboard.on_invalid_move(data)
+        elif data['action_type'] == 'after_promotion':
+            self.client.gameboard.after_promotion(data)
 
 
     def parse_message(self, data):

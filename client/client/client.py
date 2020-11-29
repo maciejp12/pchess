@@ -9,6 +9,7 @@ from .textinput import TextInput
 from .submitname import SubmitName
 from .sendmsg import SendMsg
 from .msgbox import MsgBox
+from .promotionselector import PromotionSelector
 
 
 class Client:
@@ -26,7 +27,7 @@ class Client:
         self.debug_text = self.main_font.render('', True, (0, 128, 128))
 
         self.width = 800
-        self.height = 600
+        self.height = 640
 
         self.running = True
         self.screen = pygame.display.set_mode((self.width, self.height))
@@ -48,6 +49,8 @@ class Client:
         self.send_msg = SendMsg(540, 560, 260, 40, self.main_font, 'send',
                                 self)
         self.msg_box = MsgBox(540, 0, 260, 520, self.main_font)
+
+        self.promotion_sel = PromotionSelector(0, 540, 256, 64, self)
 
         self.block_input = False
         self.connected = False
@@ -94,15 +97,18 @@ class Client:
                         if event.key == pygame.K_RETURN:
                             self.send_msg.confirm_send()
 
+                if self.handling_promotion:
+                    self.promotion_sel.handle_event(event)
+
             if event.type == pygame.QUIT: 
                 self.running = False
 
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     print('space')
-                elif event.key == pygame.K_p:
-                    if self.handling_promotion:
-                        self.gameboard.finish_promotion('queen')
+                #elif event.key == pygame.K_p:
+                #    if self.handling_promotion:
+                #        self.gameboard.finish_promotion('queen')
 
                 if not self.name_input.active:
                     if event.key == pygame.K_f:
@@ -132,6 +138,8 @@ class Client:
             self.msg_input.draw(self.surface)
             self.send_msg.draw(self.surface)
             self.msg_box.draw(self.surface)
+            if self.handling_promotion:
+                self.promotion_sel.draw(self.surface)
 
         if not self.connected:
             self.name_input.draw(self.surface)

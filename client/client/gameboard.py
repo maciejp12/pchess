@@ -214,7 +214,8 @@ class Gameboard:
         source_field['piece']['color'] = None
 
         if move['promotion']:
-            self.handle_promotion(move)
+            if self.turn == self.side:
+                self.handle_promotion(move)
             return
 
         self.turn = data['cur_turn']
@@ -239,6 +240,16 @@ class Gameboard:
 
         self.promotion_move = None
         self.client.handling_promotion = False
+
+
+    def after_promotion(self, data):
+        promotion = data['promotion']
+        cords = promotion['cords']
+        piece_replacement = promotion['piece_replacement']
+        self.fields[cords[0]][cords[1]]['piece']['type'] = piece_replacement
+        print(self.fields[cords[0]][cords[1]])
+        self.turn = data['cur_turn']
+        self.waiting = False
 
 
     def on_invalid_move(self, data):

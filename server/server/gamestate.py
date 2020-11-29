@@ -210,7 +210,7 @@ class GameState:
                         
                         if move['promotion']:
                             action = self.build_before_turn_action(move)
-                            client.send_data(json.dumps(action))
+                            self.send_to_all(json.dumps(action))
                             return
 
                         if self.cur_turn == 1:
@@ -230,11 +230,14 @@ class GameState:
 
 
     def handle_promotion_response(self, data, client):
-        piece_type = data['piece_selected']
+        promotion = data['data']
+        
+        piece_type = promotion['piece_selected']
         piece_replacement = None
-        x = data['move']['target'][0]
-        y = data['move']['target'][1]
-        side = self.cur_turn
+        x = promotion['move']['target'][0]
+        y = promotion['move']['target'][1]
+        
+        side = data['source']['side']
 
         if piece_type == 'rook':
             piece_replacement = Rook(x, y, side, self)
@@ -242,7 +245,7 @@ class GameState:
             piece_replacement = Knight(x, y, side, self)
         elif piece_type == 'bishop':
             piece_replacement = Bishop(x, y, side, self)
-        else
+        else:
             piece_replacement = Queen(x, y, side, self)
 
         piece_replacement.idle = False
@@ -255,12 +258,12 @@ class GameState:
 
         #TODO check if cm
         
-        promotion = {
-            'piece_replacement' : piece_type
+        promotion_data = {
+            'piece_replacement' : piece_type,
             'cords' : (x, y)
         }
 
-        action = self.build_promotion_action(promotion)
+        action = self.build_promotion_action(promotion_data)
         self.send_to_all(json.dumps(action))
 
 
