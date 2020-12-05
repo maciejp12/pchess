@@ -26,6 +26,7 @@ class King(LinearPiece):
         for field in super().get_movable(depth):
             if x - 1 <= field[0] <= x + 1 and y - 1 <= field[1] <= y + 1:
                 movables.append(field)
+    
 
         if depth < 1:
             self.remove_check_moves(movables, depth)

@@ -25,7 +25,7 @@ class PromotionSelector:
                     
                     selected = int(selected)
 
-                    pieces = ('rook', 'kngiht', 'bishop', 'queen')
+                    pieces = ('rook', 'knight', 'bishop', 'queen')
                     self.client.gameboard.finish_promotion(pieces[selected])
 
 

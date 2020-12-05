@@ -29,7 +29,17 @@ class Piece:
         for move in to_remove:
             moves.remove(move)
         
-        
+
+    def get_special_moves(self):
+        moves = self.get_movable()
+        special_list = list()
+        for move in moves:
+            special_move = {
+                'cords' : move,
+                'special' : None
+            }
+            special_list.append(special_move)
+        return special_list
 
 
     def on_init(self, x, y, color, state):
@@ -54,8 +64,9 @@ class Piece:
     def piece_to_json(self):
         result = dict()
 
-        return {'cord' : (self.x, self.y),
+        return {
+                'cord' : (self.x, self.y),
                 'type' : type(self).__name__.lower(),
                 'color' : self.color
-                }
+               }
 

@@ -179,11 +179,26 @@ class GameState:
             if piece != None:
                 if piece.color == cl_side:
                     mov = piece.get_movable()
+                    
+                    if not (self.is_checked(self.board, self.cur_turn)):
+                        if piece.piece_to_json == 'king':
+                            self.handle_castling_movable(self.cur_turn, piece)
+                    
                     response['data']['valid'] = True
                     response['data']['mov_list'] = mov
 
         client.send_data(json.dumps(response))
 
+
+    def handle_castling_movable(self, side, king):        
+        if king == None:
+            return
+
+        if not king.idle:
+            return 
+
+        x = king.x
+        y = king.y
 
     def handle_move(self, data, client):
         """
@@ -205,7 +220,16 @@ class GameState:
             piece = self.board[source[0]][source[1]]
             if piece != None:
                 if piece.color == cl_side:
-                    if tuple(target) in piece.get_movable():
+                    moves = piece.get_special_moves()
+                    valid_move = False
+                    special = None
+                    for move in moves:
+                        if move['cords'] == tuple(target):
+                            valid_move = True
+                            special = move['special']
+                            break
+                    
+                    if valid_move and special == None:
                         move = self.make_move(source, target)
                         
                         if move['promotion']:
