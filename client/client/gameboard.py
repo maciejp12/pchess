@@ -213,6 +213,19 @@ class Gameboard:
         source_field['piece']['type'] = None
         source_field['piece']['color'] = None
 
+        if move['special']['type'] == 'castling':
+            rook_move = move['special']['data']
+            rook_source = rook_move['source']
+            rook_target = rook_move['target']
+
+            rook_source_field = self.fields[rook_source[0]][rook_source[1]]
+            rook_target_field = self.fields[rook_target[0]][rook_target[1]]
+
+            rook_target_field['piece']['type'] = rook_source_field['piece']['type']
+            rook_target_field['piece']['color'] = rook_source_field['piece']['color']
+            rook_source_field['piece']['type'] = None
+            rook_source_field['piece']['color'] = None
+        
         if move['promotion']:
             if self.turn == self.side:
                 self.handle_promotion(move)

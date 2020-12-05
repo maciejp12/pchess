@@ -181,8 +181,10 @@ class GameState:
                     mov = piece.get_movable()
                     
                     if not (self.is_checked(self.board, self.cur_turn)):
-                        if piece.piece_to_json == 'king':
-                            self.handle_castling_movable(self.cur_turn, piece)
+                        if piece.piece_to_json()['type'] == 'king':
+                            moves = self.handle_castling_movable(self.cur_turn, piece)
+                            for m in moves:
+                                mov.append(m)
                     
                     response['data']['valid'] = True
                     response['data']['mov_list'] = mov
@@ -191,6 +193,8 @@ class GameState:
 
 
     def handle_castling_movable(self, side, king):        
+        moves = []
+
         if king == None:
             return
 
@@ -199,6 +203,51 @@ class GameState:
 
         x = king.x
         y = king.y
+
+        for d in (0, 7):
+            rook = self.board[d][y]
+            if rook != None:
+                if rook.color == side and rook.idle:
+                    clear = True
+                    ran = range(1, x)
+        
+                    if d == 7:
+                        ran = range(x + 1, 7)
+        
+                    for i in ran:
+                        if self.board[i][y] != None:
+                            clear = False
+                            break
+
+                    if clear:
+                        state_copy = self.copy_state()
+                        board_copy = state_copy.board
+                        king_copy = board_copy[x][y]
+                        rook_copy = board_copy[d][y]
+                        
+                        dx = x - 2
+                        if d == 7:
+                            dx = x + 2
+                        board_copy[dx][y] = king_copy
+                        board_copy[x][y] = None
+                        king_copy.x = dx
+
+                        dx = x - 1
+                        if d == 7:
+                            dx = x + 1
+
+                        board_copy[dx][y] = rook_copy
+                        board_copy[d][y] = None
+                        rook_copy.x = dx
+
+                        if not state_copy.is_checked(board_copy, side):
+                            dx = x - 2
+                            if d == 7:
+                                dx = x + 2
+                            moves.append((dx, y))
+
+        return moves
+
 
     def handle_move(self, data, client):
         """
@@ -228,9 +277,9 @@ class GameState:
                             valid_move = True
                             special = move['special']
                             break
-                    
-                    if valid_move and special == None:
-                        move = self.make_move(source, target)
+                        
+                    if valid_move:
+                        move = self.make_move(source, target, special)
                         
                         if move['promotion']:
                             action = self.build_before_turn_action(move)
@@ -243,7 +292,7 @@ class GameState:
                             self.cur_turn = 1
 
                         #TODO check if is checked
-                        self.is_checked(self.board, self.cur_turn)
+                        #self.is_checked(self.board, self.cur_turn)
 
                         action = self.build_before_turn_action(move)
                         self.send_to_all(json.dumps(action))
@@ -291,7 +340,7 @@ class GameState:
         self.send_to_all(json.dumps(action))
 
 
-    def make_move(self, source, target):
+    def make_move(self, source, target, special):
         """
             Moves source piece to target fieed
 
@@ -322,6 +371,26 @@ class GameState:
         source_piece.x = target[0]
         source_piece.y = target[1]
 
+        special_data = None
+
+        if special == 'castling':
+            xside = 0
+            dx = 1
+            if source[0] < target[0]:
+                xside = 7
+                dx = -1
+            rook = self.board[xside][target[1]]
+            
+            self.board[target[0] + dx][target[1]] = rook
+            self.board[xside][target[1]] = None
+            rook.x = target[0] + dx
+            rook.idle = False
+            
+            special_data = {
+                'source' : (xside, target[1]),
+                'target' : (target[0] + dx, target[1])
+            }
+
         source_piece.after_move()
         promotion = source_piece.is_promoted()
     
@@ -330,6 +399,10 @@ class GameState:
             'target' : target,
             'hit' : hit,
             'promotion' : promotion,
+            'special' : {
+                'type' : special,
+                'data' : special_data
+            },
             'log' : {
                 'source_pre' : source_pre,
                 'target_pre' : target_pre

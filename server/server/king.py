@@ -17,6 +17,28 @@ class King(LinearPiece):
         self.on_init(x, y, color, state)
 
 
+    def get_special_moves(self):
+        special_list = super().get_special_moves()
+        special_type = 'castling'
+
+        if self.idle:
+            special_list.append(
+                {
+                    'cords' : (self.x - 2, self.y),
+                    'special' : special_type
+                }
+            )
+
+            special_list.append(
+                {
+                    'cords' : (self.x + 2, self.y),
+                    'special' : special_type
+                }
+            )
+
+        return special_list
+
+
     def get_movable(self, depth=0):
         movables = []
 
