@@ -50,10 +50,12 @@ class Piece:
         self.state.board[x][y] = self
         self.idle = True
         self.promoted = False
+        self.after_first_move = False
 
 
     def after_move(self):
         if self.idle:
+            self.after_first_move = True
             self.idle = False
 
 

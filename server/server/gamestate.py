@@ -391,6 +391,11 @@ class GameState:
                 'target' : (target[0] + dx, target[1])
             }
 
+        for row in self.board:
+            for field in row:
+                if field != None:
+                    field.after_first_move = False
+
         source_piece.after_move()
         promotion = source_piece.is_promoted()
     
