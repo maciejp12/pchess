@@ -193,13 +193,13 @@ class GameState:
 
 
     def handle_castling_movable(self, side, king):        
-        moves = []
+        moves = list()
 
         if king == None:
-            return
+            return moves
 
         if not king.idle:
-            return 
+            return moves
 
         x = king.x
         y = king.y
@@ -390,7 +390,7 @@ class GameState:
                 'source' : (xside, target[1]),
                 'target' : (target[0] + dx, target[1])
             }
-
+        
         for row in self.board:
             for field in row:
                 if field != None:

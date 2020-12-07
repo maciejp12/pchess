@@ -60,7 +60,7 @@ class Piece:
 
 
     def is_promoted(self):
-        return False
+        return self.promoted
 
 
     def piece_to_json(self):
