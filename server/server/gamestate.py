@@ -4,6 +4,7 @@ from .knight import Knight
 from .bishop import Bishop
 from .queen import Queen
 from .king import King
+from .piece import Piece
 import random
 import json
 
@@ -340,7 +341,7 @@ class GameState:
         self.send_to_all(json.dumps(action))
 
 
-    def make_move(self, source, target, special):
+    def make_move(self, source, target, special=None):
         """
             Moves source piece to target fieed
 
@@ -391,6 +392,22 @@ class GameState:
                 'target' : (target[0] + dx, target[1])
             }
         
+        if special == 'enpassant':
+            dy = 0
+
+            if source_piece.color == Piece.white:
+                dy = -1
+            else:
+                dy = 1
+
+            self.board[target[0]][target[1] - dy] = None
+
+            hit = True
+
+            special_data = {
+                'passed_pawn' : (target[0], target[1] - dy)
+            }
+
         for row in self.board:
             for field in row:
                 if field != None:

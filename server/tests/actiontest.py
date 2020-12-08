@@ -37,6 +37,10 @@ class ActionTest(unittest.TestCase):
             'target' : target,
             'hit' : False,
             'promotion' : False,
+            'special' : {
+                'type' : None,
+                'data' : None
+            },
             'log' : {
                 'source_pre' : source_pre_json,
                 'target_pre' : None
@@ -74,6 +78,10 @@ class ActionTest(unittest.TestCase):
             'target' : target,
             'hit' : True,
             'promotion' : False,
+            'special' : {
+                'type' : None,
+                'data' : None
+            },
             'log' : {
                 'source_pre' : piece_pre_json,
                 'target_pre' : target_pre_json

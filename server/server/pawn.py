@@ -26,6 +26,32 @@ class Pawn(Piece):
         self.on_init(x, y, color, state)
 
 
+    def get_special_moves(self):
+        board = self.state.board
+        
+        special_list = super().get_special_moves()
+        special_type = 'enpassant'
+        
+        dy = 0
+
+        if self.color == Piece.white:
+            dy = -1
+        else:
+            dy = 1
+
+        for move in special_list:
+            cords = move['cords']
+            if cords == (self.x - 1, self.y + dy):
+                if board[self.x - 1][self.y + dy] == None:
+                    move['special'] = special_type
+
+            if cords == (self.x + 1, self.y + dy):
+                if board[self.x + 1][self.y + dy] == None:
+                    move['special'] = special_type
+        
+        return special_list
+
+
     def get_movable(self, depth=0):
         board = self.state.board
         limit = 8
@@ -51,14 +77,27 @@ class Pawn(Piece):
                 if board[x_pos][y_pos] != None:
                     if board[x_pos][y_pos].color != self.color:
                         movables.append((x_pos, y_pos))
-            
+                else:
+                    pass_pawn = board[x_pos][y_pos - dy]
+                    if pass_pawn != None:
+                        if pass_pawn.piece_to_json()['type'] == 'pawn':
+                            if pass_pawn.color != self.color:
+                                if not pass_pawn.idle and pass_pawn.after_first_move:
+                                    movables.append((x_pos, y_pos))
+                
             x_pos = self.x + 1
             
             if 0 <= x_pos < limit:
                 if board[x_pos][y_pos] != None:
                     if board[x_pos][y_pos].color != self.color:
                         movables.append((x_pos, y_pos))
-
+                else:
+                    pass_pawn = board[x_pos][y_pos - dy]
+                    if pass_pawn != None:
+                        if pass_pawn.piece_to_json()['type'] == 'pawn':
+                            if pass_pawn.color != self.color:
+                                if not pass_pawn.idle and pass_pawn.after_first_move:
+                                    movables.append((x_pos, y_pos))
 
 
 
@@ -69,7 +108,8 @@ class Pawn(Piece):
                 if board[self.x][self.y + dy] == None:
                     movables.append((self.x, y_pos))
 
-        
+
+
         if depth < 1:
             self.remove_check_moves(movables, depth)
         

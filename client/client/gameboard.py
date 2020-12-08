@@ -226,6 +226,12 @@ class Gameboard:
             rook_source_field['piece']['type'] = None
             rook_source_field['piece']['color'] = None
         
+        if move['special']['type'] == 'enpassant':
+            passed_pawn = move['special']['data']['passed_pawn']
+            passed_pawn_field = self.fields[passed_pawn[0]][passed_pawn[1]]
+            passed_pawn_field['piece']['type'] = None
+            passed_pawn_field['piece']['type'] = None
+
         if move['promotion']:
             if self.turn == self.side:
                 self.handle_promotion(move)

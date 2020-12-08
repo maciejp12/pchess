@@ -229,6 +229,33 @@ class PieceTest(unittest.TestCase):
         self.assertTrue(actual)
         
 
+    def test_pawn_enpassant_movable(self):
+        state = GameState()
+
+        x, y = 3, 6
+
+        pawn = Pawn(x, y, Piece.white, state)
+        target_a = Pawn(x - 1, y, Piece.black, state)
+
+        pawn.idle = False
+        target_a.idle = False
+        target_a.after_first_move = True
+
+        actual = set(pawn.get_movable())
+        expected = {(3, 5), (2, 5)}
+
+        self.assertSetEqual(actual, expected)
+
+        target_b = Pawn(x + 1, y, Piece.black, state)
+        target_b.idle = False
+        target_b.after_first_move = False
+
+        actual = set(pawn.get_movable())
+        expected = {(3, 5), (2, 5)}
+
+        self.assertSetEqual(actual, expected)
+
+
     def test_rook_movable(self):
         state = GameState()
 
