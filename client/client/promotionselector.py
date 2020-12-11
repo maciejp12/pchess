@@ -12,8 +12,7 @@ class PromotionSelector:
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self.rect.collidepoint(event.pos):
-                if event.button == 1:
-                    print(event.pos)
+                if event.button == 1: 
                     x = event.pos[0] - self.rect.x
                     
                     selected = (x / self.rect.width) * 4

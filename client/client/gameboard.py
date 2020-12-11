@@ -4,9 +4,9 @@ import json
 
 class Gameboard:
 
-
-    black = (71, 60, 35) 
-    white = (235, 210, 160)
+ 
+    black = (181, 136, 99)
+    white = (240, 217, 181)
     t_green = (0, 255, 0)
     size = 8
 
@@ -265,8 +265,7 @@ class Gameboard:
         promotion = data['promotion']
         cords = promotion['cords']
         piece_replacement = promotion['piece_replacement']
-        self.fields[cords[0]][cords[1]]['piece']['type'] = piece_replacement
-        print(self.fields[cords[0]][cords[1]])
+        self.fields[cords[0]][cords[1]]['piece']['type'] = piece_replacement 
         self.turn = data['cur_turn']
         self.waiting = False
 

@@ -37,7 +37,7 @@ class Client:
 
         self.clock = pygame.time.Clock()
         self.max_fps = 60.0
-        self.show_debug = True
+        self.show_debug = False
         
         self.gameboard = Gameboard(0, 0, 512, 512)
         self.gameboard.set_client(self)
@@ -106,13 +106,8 @@ class Client:
                 self.running = False
 
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    print('space')
-                #elif event.key == pygame.K_p:
-                #    if self.handling_promotion:
-                #        self.gameboard.finish_promotion('queen')
 
-                if not self.name_input.active:
+                if not self.name_input.active and not self.msg_input.active:
                     if event.key == pygame.K_f:
                         self.show_debug = not self.show_debug
 
