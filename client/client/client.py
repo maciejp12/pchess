@@ -33,6 +33,8 @@ class Client:
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.surface = pygame.Surface((self.width, self.height))
 
+        pygame.display.set_caption('Pchess')
+
         self.clock = pygame.time.Clock()
         self.max_fps = 60.0
         self.show_debug = True
