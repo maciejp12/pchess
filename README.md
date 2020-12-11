@@ -37,7 +37,7 @@ After starting client and server running in the background, server will wait for
 
 Game starts after both clients enter name in the name text input and click submit button. Clients can perform game moves on their turns and send text messages in simple chat on the right side of client application.
 
-![Running server](./images/demo/runserver.png)
+![Running server](./images/demo/runserverdemo.png)
 
 ![Game screenshot](./images/demo/gamedemo.png)
 
