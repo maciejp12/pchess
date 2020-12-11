@@ -69,7 +69,7 @@ class ClientThread:
         if signal == 'connect':
             self.name = source['name']
             self.id = self.server.connected_clients.index(self)
-            #TODO only on connected gamestate (select from list later)
+           
             self.server.game.handle_on_connect(self)
 
         if signal == 'disconnect':
@@ -100,10 +100,10 @@ class ClientThread:
         action_type = action['action_type']
 
         if action_type == 'get_movable':
-            #TODO handle only on connected gamestate (select from list later)
+           
             self.server.game.handle_get_movable(data, self)
         elif action_type == 'move':
-            #TODO same as above
+          
             self.server.game.handle_move(data, self)
         elif action_type == 'promotion_response':
             self.server.game.handle_promotion_response(data, self)

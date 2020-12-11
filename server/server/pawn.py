@@ -15,7 +15,7 @@ class Pawn(Piece):
                    
                    {'position' : (0, 6), 'color' : Piece.white},
                    {'position' : (1, 6), 'color' : Piece.white},
-                   {'position' : (2, 2), 'color' : Piece.white},
+                   {'position' : (2, 6), 'color' : Piece.white},
                    {'position' : (3, 6), 'color' : Piece.white},
                    {'position' : (4, 6), 'color' : Piece.white},
                    {'position' : (5, 6), 'color' : Piece.white},
