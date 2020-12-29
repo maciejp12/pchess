@@ -38,6 +38,8 @@ class Gameboard:
         }
 
         self.movable_img = pygame.image.load(path + 'movable_field.png')
+        self.moved_from = pygame.image.load(path + 'moved_from.png')
+        self.moved_to = pygame.image.load(path + 'moved_to.png')
 
         self.side = None
         self.turn = None
@@ -46,6 +48,7 @@ class Gameboard:
         self.fields = []
         self.selected = None
 
+        self.last_move = None
         self.promotion_move = None
 
         for i in range(0, self.size):
@@ -232,6 +235,12 @@ class Gameboard:
             passed_pawn_field['piece']['type'] = None
             passed_pawn_field['piece']['type'] = None
 
+        self.last_move = {
+                            'source' : (source[0], source[1]),
+                            'target' : (target[0], target[1])
+                         }
+
+
         if move['promotion']:
             if self.turn == self.side:
                 self.handle_promotion(move)
@@ -292,6 +301,16 @@ class Gameboard:
                 if field['piece']['type'] != None:
                     self.draw_piece(surface, field, x, y)
 
+                if self.last_move != None:
+                    lms = self.last_move['source']
+                    lmt = self.last_move['target']
+        
+                    if lms[0] == i and lms[1] == j:
+                        self.draw_last_move_source(surface, x, y)
+        
+                    if lmt[0] == i and lmt[1] == j:
+                        self.draw_last_move_target(surface, x, y)
+
                 if field['movable']:
                     self.draw_movable(surface, x, y)
 
@@ -315,7 +334,19 @@ class Gameboard:
         
         surface.blit(piece_img, (x, y))
 
-    
+
+    def draw_last_move_source(self, surface, x, y):
+        scale = (int(self.field_wid), int(self.field_hei))
+        img = pygame.transform.scale(self.moved_from, scale)
+        surface.blit(img, (x, y))
+
+
+    def draw_last_move_target(self, surface, x, y):
+        scale = (int(self.field_wid), int(self.field_hei))
+        img = pygame.transform.scale(self.moved_to, scale)
+        surface.blit(img, (x, y))
+
+
     def draw_movable(self, surface, x, y):
         scale = (int(self.field_wid), int(self.field_hei))
         img = pygame.transform.scale(self.movable_img, scale)

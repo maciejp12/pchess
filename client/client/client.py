@@ -146,8 +146,9 @@ class Client:
             t_str = ' turn=' + str(self.gameboard.turn)
             s_str = ' side=' + str(self.gameboard.side)
             h_pr = ' hp=' + str(self.handling_promotion)
+            l_str = ' lm=' + str(self.gameboard.last_move)
 
-            db_text = str(delta) + t_str + s_str + h_pr
+            db_text = str(delta) + t_str + s_str + h_pr + l_str
             self.debug_text = self.main_font.render(db_text, True, (0, 128, 128))
             self.surface.blit(self.debug_text, (0, 0))
 
