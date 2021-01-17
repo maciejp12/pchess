@@ -82,6 +82,9 @@ class Gameboard:
                         
 
     def handle_field_action(self, x, y):
+        if self.side == 1:
+            y = 7 - y
+        
         field = self.fields[x][y]
         if self.side == self.turn:
             if field['movable']:
@@ -292,9 +295,14 @@ class Gameboard:
     def draw(self, surface):
         for i in range(0, self.size):
             for j in range(0, self.size):
+
                 field = self.fields[i][j]
                 x = i * self.field_wid + self.rect.left
                 y = j * self.field_hei + self.rect.top
+                
+                if self.side == 1:
+                    y = (7 - j) * self.field_hei + self.rect.top
+                
                 r = (x, y, self.field_wid, self.field_hei)
                 pygame.draw.rect(surface, field['color'], r)
                 
