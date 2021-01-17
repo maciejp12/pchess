@@ -8,11 +8,14 @@ class ChessServer:
 
 
     def __init__(self):
+        self.print_debug = False
+        
         self.address = '127.0.0.1'
         self.port = 6667
         self.server = None
         self.connected_clients = []
         self.running = False
+
         self.game = GameState() 
         self.game.set_server(self)
 

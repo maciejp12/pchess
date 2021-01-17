@@ -16,6 +16,8 @@ class Client:
 
 
     def __init__(self):
+        self.print_debug = False
+
         pygame.init()
         x = 64
         y = 64
@@ -38,7 +40,7 @@ class Client:
         self.clock = pygame.time.Clock()
         self.max_fps = 60.0
         self.show_debug = False
-        
+
         self.gameboard = Gameboard(0, 0, 512, 512)
         self.gameboard.set_client(self)
 

@@ -50,9 +50,10 @@ class ClientThread:
         for data_json in splited: 
             form = data_json['form']
 
-            green = '\033[92m'
-            white = '\033[00m'
-            print(f'{green}RECIEVED:{data_json}{white}')
+            if self.server.print_debug:
+                green = '\033[92m'
+                white = '\033[00m'
+                print(f'{green}RECIEVED:{data_json}{white}')
 
             if form == 'signal':
                 self.parse_signal(data_json)
@@ -124,9 +125,10 @@ class ClientThread:
 
     def send_data(self, data):
         if self.active:
-            blue = '\033[94m'
-            white = '\033[00m'
-            print(f'{blue}SENDING :{data}{white}')
+            if self.server.print_debug:
+                blue = '\033[94m'
+                white = '\033[00m'
+                print(f'{blue}SENDING :{data}{white}')
 
             encoded = data.encode('utf8')
             self.connection.send(encoded)
