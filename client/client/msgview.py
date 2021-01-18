@@ -4,7 +4,11 @@ import pygame
 class MsgView:
 
 
-    bg_color = (200, 180, 120)
+    bg_color = (236, 236, 236)
+
+    bg_color_white = (236, 200, 144)
+    bg_color_black = (164, 160, 96)
+
     fg_color = (4, 4, 4)
 
 
@@ -14,8 +18,13 @@ class MsgView:
         time = message['datetime'].split(' ')[1][:-7]
         username = message['source']['name']
         content = message['content']
-        
+        self.user_side = message['source']['side']
+
         self.text = time + ' ' + username + ': ' + content
+
+        if self.user_side == -1:
+            self.text = time + '||' + content
+
         self.rect = None
 
 
@@ -39,7 +48,13 @@ class MsgView:
         self.rect = pygame.Rect(point[0], point[1] - (len(lines) * hei), 
                                 wid, len(lines) * hei)
         
-        pygame.draw.rect(surface, self.bg_color, self.rect) 
+        bg = self.bg_color
+        if self.user_side == 0:
+            bg = self.bg_color_white
+        elif self.user_side == 1:
+            bg = self.bg_color_black
+
+        pygame.draw.rect(surface, bg, self.rect) 
         
         for i in range(0, len(lines)):
             line = lines[i]

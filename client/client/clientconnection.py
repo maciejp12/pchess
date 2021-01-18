@@ -88,6 +88,9 @@ class ClientConnection:
             self.client.gameboard.load_state(data['state'])
             self.client.gameboard.side = data['color']
             self.client.gameboard.turn = data['turn']
+            self.client.handle_message(self.build_gamestart_message(
+                data['datetime'], data['color']))
+            
         elif data['signal_type'] == 'waiting':
             self.client.waiting = True
             self.client.connected = True
@@ -130,4 +133,21 @@ class ClientConnection:
 
         self.send(json.dumps(disconnect_signal))
 
-        self.client_socket.close() 
+        self.client_socket.close()
+
+
+    def build_gamestart_message(self, date, side):
+        side_str = 'white'
+        if side == 1:
+            side_str = 'black'
+
+        message = {
+            'source' : {
+                'name' : '',
+                'side' : -1
+            },
+            'content' : 'GAME STARTED, YOUR SIDE IS ' + side_str,
+            'datetime' : date
+        }
+
+        return message

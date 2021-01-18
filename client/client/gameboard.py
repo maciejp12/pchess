@@ -187,7 +187,6 @@ class Gameboard:
                 self.fields[field[0]][field[1]]['movable'] = True
         else:
             self.unselect_all()
-            print('get movable response is invalid')
 
 
     def load_state(self, state):
@@ -252,6 +251,30 @@ class Gameboard:
         self.turn = data['cur_turn']
         self.waiting = False
 
+        if data['checkmated']:
+            self.client.handle_message(self.build_checkmate_message(
+                data['datetime'], self.turn))
+
+
+    def build_checkmate_message(self, date, side):
+        lose_side = 'WHITE'
+        win_side = 'BLACK'
+        if side == 1:
+            lose_side = 'BLACK'
+            win_side = 'WHITE'
+
+        content = f'CHECKMATE {win_side} WINS, {lose_side} LOST'
+        message = {
+            'source' : {
+                'name' : '',
+                'side' : -1
+            },
+            'content' : content,
+            'datetime' : date
+        }
+
+        return message
+
 
     def handle_promotion(self, move):
         self.promotion_move = move
@@ -280,6 +303,12 @@ class Gameboard:
         self.fields[cords[0]][cords[1]]['piece']['type'] = piece_replacement 
         self.turn = data['cur_turn']
         self.waiting = False
+
+        if data['checkmated']:
+            self.client.handle_message(self.build_checkmate_message(
+                data['datetime'], self.turn))
+
+
 
 
     def on_invalid_move(self, data):

@@ -7,6 +7,8 @@ from .king import King
 from .piece import Piece
 import random
 import json
+from datetime import datetime
+
 
 
 class GameState:
@@ -68,6 +70,7 @@ class GameState:
         """
 
         print('STARTING GAME')
+        
         cols = list()
         cols.append(random.randint(0, 1))
 
@@ -97,14 +100,15 @@ class GameState:
                 'signal_type' : 'onstart',
                 'color' : color,
                 'state' : self.state_to_json(),
-                'turn' : self.cur_turn
+                'turn' : self.cur_turn,
+                'datetime' : str(datetime.now())
             }
         }
 
         return initstate
 
 
-    def build_before_turn_action(self, move):
+    def build_before_turn_action(self, move, checkmate):
         """
             Build signal with data about last move made
         """
@@ -114,20 +118,24 @@ class GameState:
             'data' : {
                 'action_type' : 'before_turn',
                 'move' : move,
-                'cur_turn' : self.cur_turn
+                'cur_turn' : self.cur_turn,
+                'checkmated' : checkmate,
+                'datetime' : str(datetime.now())
             }
         }
 
         return before
 
 
-    def build_promotion_action(self, promotion):
+    def build_promotion_action(self, promotion, checkmate):
         promotion_action = {
             'form' : 'action',
             'data' : {
                 'action_type' : 'after_promotion',
                 'promotion' : promotion,
-                'cur_turn' : self.cur_turn
+                'cur_turn' : self.cur_turn,
+                'checkmated' : checkmate,
+                'datetime' : str(datetime.now())
             }
         }
 
@@ -283,7 +291,7 @@ class GameState:
                         move = self.make_move(source, target, special)
                         
                         if move['promotion']:
-                            action = self.build_before_turn_action(move)
+                            action = self.build_before_turn_action(move, False)
                             self.send_to_all(json.dumps(action))
                             return
 
@@ -292,10 +300,12 @@ class GameState:
                         else:
                             self.cur_turn = 1
 
-                        #TODO check if is checked
-                        #self.is_checked(self.board, self.cur_turn)
+                        checkmate = False
+                        if self.is_checked(self.board, self.cur_turn):
+                            if not self.has_moves(self.cur_turn):
+                                checkmate = True
 
-                        action = self.build_before_turn_action(move)
+                        action = self.build_before_turn_action(move, checkmate)
                         self.send_to_all(json.dumps(action))
                         return
 
@@ -330,14 +340,17 @@ class GameState:
         else:
             self.cur_turn = 1
 
-        #TODO check if cm
-        
+        checkmate = False
+        if self.is_checked(self.board, self.cur_turn):
+            if not self.has_moves(self.cur_turn):
+                checkmate = True
+
         promotion_data = {
             'piece_replacement' : piece_type,
             'cords' : (x, y)
         }
 
-        action = self.build_promotion_action(promotion_data)
+        action = self.build_promotion_action(promotion_data, checkmate)
         self.send_to_all(json.dumps(action))
 
 
@@ -476,6 +489,22 @@ class GameState:
 
 
         return checked
+
+
+    def has_moves(self, side):
+        """
+            Return True if side pameter side has any moves aviable in current turn
+            else return False
+        """
+
+        all_moves = list()
+        for row in self.board:
+            for piece in row:
+                if piece != None:
+                    if piece.color == side:
+                        for move in piece.get_movable():
+                            all_moves.append(move)
+        return len(all_moves) > 0
 
 
     def send_to_all(self, data):
